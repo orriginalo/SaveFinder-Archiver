@@ -19,6 +19,15 @@ pip install -r requirements.txt
 ### Milestones :
 1) Add support for a little more games.
 2) Create a gui version.
+---
+#### Supported games:
+- Stormworks
+- Geometry Dash
+- Terraria
+- Project Zomboid
+- FTL : Faster Than Light
+- RimWorld
+- Stardew Valley
 
 #### Games coming up:
 - Minecraft

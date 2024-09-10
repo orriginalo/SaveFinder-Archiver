@@ -19,6 +19,15 @@ pip install -r requirements.txt
 ### Этапы :
 1) Добавить поддержку чуть большего количества игр.
 2) Создать GUI для программы.
+---
+#### Поддерживаемые игры:
+- Stormworks
+- Geometry Dash
+- Terraria
+- Project Zomboid
+- FTL : Faster Than Light
+- RimWorld
+- Stardew Valley
 
 #### Игры на очереди:
 - Minecraft

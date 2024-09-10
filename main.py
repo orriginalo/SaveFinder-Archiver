@@ -44,7 +44,8 @@ def first_run():
 				'zomboid_path': '',
 				'deadcells_path': '',
 				'ftl_path': '',
-				'rimworld_path': ''
+				'rimworld_path': '',
+				'stardew_path': '',
 				}
 		}
 
@@ -169,7 +170,7 @@ def check_def_paths(steam_path, doc_path, appdata_path):
 	print("--- Finding [bold white]GAMES SAVES [/bold white]paths... ---")
 	
 	if config.get('GAME PATHS', 'deadcells_path') == '':
-		for root, dirs, files in os.walk(steam_path): # Поиск в директории Steam
+		for root, dirs, files in os.walk(steam_path): # Поиск в директории Steam -------------------
 			for dirname in dirs:
 					match(dirname):
 						case "588650": # Код игры в Steam
@@ -179,7 +180,7 @@ def check_def_paths(steam_path, doc_path, appdata_path):
 		print_from_cfg("DeadCells", "deadcells_path")
 							
 	if config.get('GAME PATHS', 'terraria_path') == '':
-		for root, dirs, files in os.walk(doc_path): # Поиск в директории документы
+		for root, dirs, files in os.walk(doc_path): # Поиск в директории документы -------------------
 			for dirname in dirs:
 					match(dirname):
 						case "Terraria":
@@ -188,8 +189,8 @@ def check_def_paths(steam_path, doc_path, appdata_path):
 	else:
 		print_from_cfg("Terraria", "terraria_path")
 		
-	if config.get('GAME PATHS', 'stormworks_path') == '' or config.get('GAME PATHS', 'geometrydash_path') == '' or config.get('GAME PATHS', 'ftl_path') == '' or config.get('GAME PATHS', 'rimworld_path') != '':
-		for root, dirs, files in os.walk(appdata_path): # Поиск в директории AppData
+	if config.get('GAME PATHS', 'stormworks_path') == '' or config.get('GAME PATHS', 'geometrydash_path') == '' or config.get('GAME PATHS', 'ftl_path') == '' or config.get('GAME PATHS', 'rimworld_path') == '' or config.get('GAME PATHS', 'stardew_path') == '':
+		for root, dirs, files in os.walk(appdata_path): # Поиск в директории AppData -------------------
 			for dirname in dirs:
 					match(dirname):
 						
@@ -209,6 +210,10 @@ def check_def_paths(steam_path, doc_path, appdata_path):
 							if "Temp" not in os.path.join(root,dirname):
 								print_detected("RimWorld", root, dirname)
 								config.set('GAME PATHS', 'rimworld_path', os.path.join(root,dirname))
+        
+						case "StardewValley":
+							print_detected("Stardew Valley", root, dirname)
+							config.set('GAME PATHS', 'stardew_path', os.path.join(root,dirname))
 	else:
 		# print("[bold blue]Extracting gamesaves paths from cfg...[/bold blue]\n")
 		print_from_cfg("Stormworks", "stormworks_path")
