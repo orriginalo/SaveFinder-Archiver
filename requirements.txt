@@ -1,0 +1,16 @@
+altgraph==0.17.4
+colorama==0.4.6
+Cython==3.0.11
+markdown-it-py==3.0.0
+mdurl==0.1.2
+packaging==24.1
+pefile==2024.8.26
+Pygments==2.18.0
+pyinstaller==6.10.0
+pyinstaller-hooks-contrib==2024.8
+pywin32==306
+pywin32-ctypes==0.2.3
+rich==13.8.0
+setuptools==72.1.0
+tqdm==4.66.5
+wheel==0.43.0

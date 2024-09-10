@@ -1,0 +1,8 @@
+/Archivated/
+/.conda
+/dist
+/build
+/main.spec
+/.vscode
+config.ini
+test.py
