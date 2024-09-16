@@ -1,0 +1,16 @@
+on: [push, pull_request, workflow_dispatch]
+
+name: Build
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: sayyid5416/pyinstaller@v1
+      with:
+        python_ver: '3.12'
+        spec: 'main_gui.py'
+        requirements: 'requirements.txt'
+        upload_exe_with_name: 'SaveFinder.exe'
+        options: --onefile, --name "SaveFinder", --windowed, --icon=icon.ico

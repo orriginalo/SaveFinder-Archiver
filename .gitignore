@@ -1,8 +1,14 @@
-/Archivated/
 /.conda
 /dist
 /build
-/main.spec
-/.vscode
+/__pycache__
+
+/Archivated/
 config.ini
+
+main.spec
+main_gui.spec
+
 test.py
+
+/.vscode
