@@ -100,7 +100,9 @@ def first_run():
 				'stardew_path': '',
 				'mgs_path': '',
 				'mgr_path': '',
-				'satisfactory_path': ''
+				'satisfactory_path': '',
+				'cult_of_the_lamb_path': '',
+				'valheim_path': ''
 				}
 		}
 
@@ -188,6 +190,12 @@ def find_games():
 	satisfactory = game("Satisfactory", "FactoryGame", local_path, "satisfactory_path")
 	satisfactory.find_game()
  
+	cult_of_the_lamb = game("Cult of the Lamb", "Cult of the Lamb", locallow_path, "cult_of_the_lamb_path")
+	cult_of_the_lamb.find_game()
+	
+	valheim = game("Valheim", "Valheim", locallow_path, "valheim_path")
+	valheim.find_game()
+	
 	# mgs = game("MGS", "MGS", appdata_path, "mgs_path")
 	# mgs.find_game()
  

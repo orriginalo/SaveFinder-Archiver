@@ -42,3 +42,30 @@ pip install -r requirements.txt
 - RimWorld
 - Stardew Valley
 - Metal Gear Rising
+- Valheim
+- Cult Of The Lamb
+  
+#### Игры на очереди:
+- Dead Cells
+- Doom 3, Eternal, 2016
+- 911 operator
+- Cities Skylines 1 , 2
+- Risk of rain 2
+- Cyberpunk 2077
+- Dying Light
+- Snowrunner
+- The forest
+- Subnautica
+- FarCry 4
+- FarCry 5
+- The long dark
+- Ultrakill
+- Disco Elysium
+- Scrap Mechanic
+- Watch Dogs 2
+- Devil May Cry 5
+- Don't starve together
+- ETS 2
+- Farming Simulator
+- Skyrim
+- Minecraft

@@ -45,7 +45,9 @@ def first_run():
 				'stardew_path': '',
 				'mgs_path': '',
 				'mgr_path': '',
-				'satisfactory_path': ''
+				'satisfactory_path': '',
+				'cult_of_the_lamb_path': '',
+				'valheim_path': ''
 				}
 		}
 
@@ -96,7 +98,7 @@ class game():
 					
 										tosave_val = IntVar()
 										tosave_val.set(0)
-										cb = Checkbutton(right_frame, text=self.name, variable=tosave_val)
+										cb = ttk.Checkbutton(right_frame, text=self.name, variable=tosave_val)
 										cb.pack(anchor=W)
 										print(tosave_val, end=' ')
 										check_vars.append(tosave_val)
@@ -114,7 +116,7 @@ class game():
 				 
 									tosave_val = IntVar()
 									tosave_val.set(0)
-									cb = Checkbutton(right_frame, text=self.name, variable=tosave_val)
+									cb = ttk.Checkbutton(right_frame, text=self.name, variable=tosave_val)
 									cb.pack(anchor=W)
 									print(tosave_val, end=' ')
 									check_vars.append(tosave_val)
@@ -133,7 +135,7 @@ class game():
 				 
 									tosave_val = IntVar()
 									tosave_val.set(0)
-									cb = Checkbutton(right_frame, text=self.name, variable=tosave_val)
+									cb = ttk.Checkbutton(right_frame, text=self.name, variable=tosave_val)
 									cb.pack(anchor=W)
 									print(tosave_val, end=' ')
 									check_vars.append(tosave_val)
@@ -150,7 +152,7 @@ class game():
 				
 								tosave_val = IntVar()
 								tosave_val.set(0)
-								cb = Checkbutton(right_frame, text=self.name, variable=tosave_val)
+								cb = ttk.Checkbutton(right_frame, text=self.name, variable=tosave_val)
 								cb.pack(anchor=W)
 								print(tosave_val, end=' ')
 								check_vars.append(tosave_val)
@@ -208,12 +210,17 @@ def find_games():
 	satisfactory = game("Satisfactory", "FactoryGame", local_path, "satisfactory_path")
 	satisfactory.find_game()
 	
-	
-	# mgs = game("MGS", "MGS", appdata_path, "mgs_path")
-	# mgs.find_game()
+	mgs = game("Metal Gear Solid","287700", documents_path, "mgs_path")
+	mgs.find_game()
  
+	cult_of_the_lamb = game("Cult Of The Lamb", "Cult Of The Lamb", locallow_path, "cult_of_the_lamb_path")
+	cult_of_the_lamb.find_game()
+ 
+	valheim = game("Valheim", "Valheim", locallow_path, "valheim_path")
+	valheim.find_game()
 	# deadcells = game("Dead Cells", "DeadCells", appdata_path, "deadcells_path")
 	# deadcells.find_game()
+	#
 	# -------------- GAMES --------------
 
 def copy_and_archive():
