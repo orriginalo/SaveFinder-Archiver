@@ -7,9 +7,7 @@
 - Searching and discovering paths to game saves
 - Copying and archiving saves into a zip archive
 ### GUI:
-- Archiving into individual archives
 - Archiving into one archive
-- Copying into individual folders
 - Copying into one folder
 
 ## 1. Installation
@@ -26,10 +24,11 @@ pip install -r requirements.txt
   
 - GUI:
 	1) Run the file **main_gui.py**
-	2) Click the **'Start finding'** button
-	3) Select the necessary checkboxes
-	4) Choose the type of copying/archiving
-	5) Click the **'Start archiving'** button
+	2) If this is the first launch, enable the checkbox **'Scan for new saves'**.
+	3) Click the **'Start finding'** button
+	4) Select the necessary checkboxes
+	5) Select copy or archive
+	6) Click the **'Start'** button
 
 ### Future Steps:
 1) Add support for more games.
