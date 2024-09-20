@@ -7,6 +7,7 @@ import configparser
 import shutil
 from rich.console import Console
 from rich import print
+from time import perf_counter
 
 roaming_path = f"C:\\Users\\{os.getlogin()}\\AppData\\Roaming"
 local_path = f"C:\\Users\\{os.getlogin()}\\AppData\\Local"
@@ -18,6 +19,8 @@ users_path = f"C:\\Users\\{os.getlogin()}"
 gameCounter = 0
 games_saves_paths = []
 check_vars = []
+
+
 
 def first_run():
 	if os.path.exists("config.ini"):
@@ -47,10 +50,27 @@ def first_run():
 				'mgr_path': '',
 				'satisfactory_path': '',
 				'cult_of_the_lamb_path': '',
-				'valheim_path': ''
+				'valheim_path': '',
+				'doom_eternal_path': '',
+				'doom_2016_path': '',
+				'operator_911_path': '',
+				'skylines1_path': '',
+				'skylines2_path': '',
+				'dying_light_path': '',
+				'snowrunner_path': '',
+				'the_forest_path': '',
+				'the_long_dark_path': '',
+				'disco_elysium_path': '',
+				'scrap_mechanic_path': '',
+				'dont_starve_together_path': '',
+				'ets_2_path': '',
+				'skyrim_path': '',
+				'fs_19_path': '',
+				'fs_17_path': '',
+				'fs_22_path': '',
+				'fallout4_path': '',
 				}
 		}
-
 		with open('config.ini', 'w') as configfile:
 				for section, values in config_data.items():
 						configfile.write(f'[{section}]\n')
@@ -83,7 +103,7 @@ class game():
 		
 	def find_game(self):
 		global gameCounter
-		if config.get('GAME PATHS', self.cfg_name) == '' or not os.path.exists(config.get('GAME PATHS', self.cfg_name)):
+		if scan_new_var.get() == 1 and (config.get('GAME PATHS', self.cfg_name) == '' or (not os.path.exists(config.get('GAME PATHS', self.cfg_name)))):
 			for root, dirs, files in os.walk(self.path):
 				for dirname in dirs:
 					if dirname == self.folder_name or dirname == self.second_folder_name:
@@ -162,27 +182,32 @@ class game():
 									config.write(configfile)
 								break
 		else:
-			gameCounter += 1
-			games_saves_paths.append(config.get('GAME PATHS', self.cfg_name))
-			games_list.insert(0, f"{self.name} - {config.get('GAME PATHS', self.cfg_name)}")
+			if config.get("GAME PATHS", self.cfg_name) != '':
+				gameCounter += 1
+				games_saves_paths.append(config.get('GAME PATHS', self.cfg_name))
+				games_list.insert(0, f"{self.name} - {config.get('GAME PATHS', self.cfg_name)}")
 
-			tosave_val = IntVar()
-			tosave_val.set(0)
-			cb = ttk.Checkbutton(right_frame, text=self.name, variable=tosave_val)
-			cb.pack(anchor=W)
-			check_vars.append(tosave_val)
+				tosave_val = IntVar()
+				tosave_val.set(0)
+				cb = ttk.Checkbutton(right_frame, text=self.name, variable=tosave_val)
+				cb.pack(anchor=W)
+				check_vars.append(tosave_val)
 
-			print(f"[bold white]{gameCounter}. [bold blue]{self.name}[bold white][italic] In:", f"{config.get('GAME PATHS', self.cfg_name)}")
+				print(f"[bold white]{gameCounter}. [bold blue]{self.name}[bold white][italic] In:", f"{config.get('GAME PATHS', self.cfg_name)}")
 
 
 
 
 def find_games():
 	startfind_btn.config(state=DISABLED)
-	
+	select_all_btn.config(state=NORMAL)	
+	startarchive_btn.config(state=NORMAL)
+ 
 	print("\n=== Finding game saves paths... ===")
 	# -------------- GAMES --------------
 	
+	start = perf_counter()	
+ 
 	stormworks = game("Stormworks","Stormworks", roaming_path, "stormworks_path")
 	stormworks.find_game()
  
@@ -218,11 +243,87 @@ def find_games():
  
 	valheim = game("Valheim", "Valheim", locallow_path, "valheim_path")
 	valheim.find_game()
+ 
+ 
+ 
+	doom_eternal = game("Doom Eternal", "DOOMEternal", users_path, "doom_eternal_path")
+	doom_eternal.find_game()
+	
+	doom_2016 = game("Doom 2016", "DOOM", users_path, "doom_2016_path", exception_in_path="AppData")
+	doom_2016.find_game()
+ 
+	operator_911 = game("911 Operator", "911 Operator", locallow_path, "operator_911_path")
+	operator_911.find_game()
+ 
+	skylines1 = game("Cities: Skylines", "Cities_Skylines", local_path, "skylines1_path")
+	skylines1.find_game()
+ 
+	skylines2 = game("Cities: Skylines 2", "Cities Skylines II", locallow_path, "skylines2_path")	
+	skylines2.find_game()
+ 
+	dying_light = game("Dying Light", "DyingLight", documents_path, "dying_light_path")
+	dying_light.find_game()
+ 
+	snowrunner = game("Snowrunner", "SnowRunner", documents_path, "snowrunner_path")
+	snowrunner.find_game()
+ 
+	the_forest = game("The Forest", "TheForest", locallow_path, "the_forest_path")
+	the_forest.find_game()
+ 
+	the_long_dark = game("The Long Dark", "TheLongDark", local_path, "the_long_dark_path")
+	the_long_dark.find_game()
+ 
+	disco_elysium = game("Disco Elysium", "Disco Elysium", locallow_path, "disco_elysium_path")
+	disco_elysium.find_game()
+ 
+	scrap_mechanic = game("Scrap Mechanic", "Scrap Mechanic", roaming_path, "scrap_mechanic_path")
+	scrap_mechanic.find_game()
+ 
+	dont_starve_together = game("Don't Starve Together", "DoNotStarveTogether", documents_path, "dont_starve_together_path")
+	dont_starve_together.find_game()
+ 
+	ets_2 = game("Euro Truck Simulator 2", "Euro Truck Simulator 2", documents_path, "ets_2_path")
+	ets_2.find_game()
+ 
+	skyrim = game("Skyrim", "Skyrim", documents_path, "skyrim_path")
+	skyrim.find_game()
+ 
+	fs_19 = game("Farming Simulator 19", "FarmingSimulator2019", documents_path, "fs_19_path")
+	fs_19.find_game()
+ 
+	fs_17 = game("Farming Simulator 17", "FarmingSimulator2017", documents_path, "fs_17_path")
+	fs_17.find_game()
+	
+	fs_22 = game("Farming Simulator 22", "FarmingSimulator2022", documents_path, "fs_22_path")
+	fs_22.find_game()
+ 
+	fallout4 = game("Fallout 4", "Fallout4", documents_path, "fallout4_path")
+	fallout4.find_game()
+ 
+ 
+	end = perf_counter()
+ 
+	time = end - start
+ 
+	print(f"\n=== Found {gameCounter} game saves paths in {time:.2f} seconds ===\n")
 	# deadcells = game("Dead Cells", "DeadCells", appdata_path, "deadcells_path")
 	# deadcells.find_game()
 	#
 	# -------------- GAMES --------------
 
+selected_all = False
+def select_all():
+	global select_all
+	
+	if select_all == True:
+		for i in check_vars:
+			i.set(0)
+		select_all = False
+	else:
+		for i in check_vars:
+			i.set(1)
+			print(i.get())
+		select_all = True
 def copy_and_archive():
 		print(value_inside.get(), " - ", options_list[2])
 		
@@ -235,9 +336,9 @@ def copy_and_archive():
 		if selected_option == options_list[1]:  # Archive to individual archives
 				for i in range(len(games_saves_paths)):
 						if check_vars[i].get() == 1:
-								destination = os.path.join(".\\Archivated", os.path.basename(games_saves_paths[i]))
+								destination = os.path.join(".\\Archivated", "temp."+os.path.basename(games_saves_paths[i]))
 								shutil.copytree(games_saves_paths[i], destination, dirs_exist_ok=True)
-								shutil.make_archive(destination, 'zip', destination)
+								shutil.make_archive(destination.replace("temp.", ""), 'zip', destination)
 								shutil.rmtree(destination)
 
 				showinfo(title="SaveFinder&Archiver", message="Files successfully archived!")
@@ -245,11 +346,11 @@ def copy_and_archive():
 		elif selected_option == options_list[2]:  # Archive all to one archive
 				selected_paths = [games_saves_paths[i] for i in range(len(games_saves_paths)) if check_vars[i].get() == 1]
 				if selected_paths:
-						archive_destination = ".\\Archivated\\All saves"
+						archive_destination = ".\\Archivated\\temp.All saves"
 						for path in selected_paths:
 								shutil.copytree(path, os.path.join(archive_destination, os.path.basename(path)), dirs_exist_ok=True)
 						
-						shutil.make_archive(archive_destination, 'zip', archive_destination)
+						shutil.make_archive(archive_destination.replace("temp.", ""), 'zip', archive_destination)
 						shutil.rmtree(archive_destination)
 
 						showinfo(title="SaveFinder&Archiver", message="Files successfully archived to one archive!")
@@ -275,13 +376,16 @@ def copy_and_archive():
 
 def change_language(lang):
 	global options_list
+	config.set('SETTINGS', 'lang', f'{lang}')
+	print(config.get('SETTINGS', 'lang'))
 	if lang == 'en':
 		header.config(text="SaveFinder")
 		select_type_lb.config(text="Select archive\ntype:")
 		startfind_btn.config(text="Start finding")
 		startarchive_btn.config(text="Start archiving")
 		found_games_lb.config(text="Found games:")
-		lang_cas.config(label="Language")
+		select_all_btn.config(text="Select all")
+		scan_new_cb.config(text="Scan for new saves")
 		# TODO: Make a translation for options_list
 		# options_list = [
 		# "",
@@ -290,13 +394,15 @@ def change_language(lang):
 		# "Copy to individual folders",
 		# "Copy all to one folder"
 		# 		]
+		# value_inside.set(options_list[1])
 	elif lang == 'ru':
 		header.config(text="SaveFinder")
 		select_type_lb.config(text="Выберите тип\nархивирования:")
 		startfind_btn.config(text="Начать поиск")
 		startarchive_btn.config(text="Начать архивирование")
 		found_games_lb.config(text="Найденные игры:")
-		lang_cas.config(label="Язык")
+		select_all_btn.config(text="Выбрать все")
+		scan_new_cb.config(text="Искать новые сохранения")
 		# options_list = [
 		# "",
 		# "Архивировать в отдельные архивы",
@@ -304,6 +410,9 @@ def change_language(lang):
 		# "Скопировать в отдельные папки",
 		# "Скопировать все в одну папку"
 		# 		]
+		# print(options_list)
+		# value_inside.set(options_list[1])
+
 
 main_w = Tk()
 main_w.title("SaveFinder & Archiver")
@@ -316,8 +425,8 @@ main_w.config(menu=menu_panel)
 language_menu = tk.Menu(menu_panel, tearoff=0)
 lang_cas = menu_panel.add_cascade(label="Language", menu=language_menu)
 
-language_menu.add_command(label="English", command=lambda: change_language('en'))
-language_menu.add_command(label="Русский", command=lambda: change_language('ru'))
+language_menu.add_command(label="English", command= lambda:change_language('en'))
+language_menu.add_command(label="Русский", command= lambda:change_language('ru'))
 
 header = Label(main_w, text="SaveFinder", font=("JetBrains Mono", 30))
 header.pack()
@@ -327,6 +436,10 @@ separator.pack(fill=X, padx=10, pady=10)
 
 startfind_btn = Button(main_w, text="Start finding", font=("JetBrains Mono", 15), command=find_games)
 startfind_btn.pack()
+
+scan_new_var = IntVar()
+scan_new_cb = ttk.Checkbutton(main_w, text="Check new gamesaves", variable=scan_new_var)
+scan_new_cb.pack()
 
 left_frame = Frame(main_w)
 left_frame.pack(side=LEFT, padx=10, pady=10, fill=BOTH)
@@ -362,7 +475,16 @@ value_inside.set(options_list[1])
 question_menu = ttk.OptionMenu(right_frame, value_inside, *options_list) 
 question_menu.pack(fill=X, anchor=W) 
 
-startarchive_btn = Button(right_frame, text="Start archiving", font=("JetBrains Mono", 10), command=copy_and_archive)
+
+startarchive_btn = Button(right_frame, text="Start archiving", font=("JetBrains Mono", 10),state=DISABLED, command=copy_and_archive)
 startarchive_btn.pack(fill=X, anchor=W)
+
+
+select_all_btn = Button(right_frame, text="Select all", font=("JetBrains Mono", 10),state=DISABLED ,command=select_all)
+select_all_btn.pack(fill=X)
+
+
+	
+change_language(config.get('SETTINGS', 'lang'))
 
 main_w.mainloop()

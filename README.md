@@ -41,34 +41,37 @@ pip install -r requirements.txt
 - Geometry Dash
 - Terraria
 - Project Zomboid
-- FTL: Faster Than Light
+- FTL : Faster Than Light
 - RimWorld
 - Stardew Valley
 - Metal Gear Rising
 - Valheim
 - Cult Of The Lamb
-
-#### Upcoming Games:
-- Dead Cells
-- Doom 3, Eternal, 2016
+- Doom Eternal
+- Doom 2016
 - 911 operator
 - Cities Skylines 1 , 2
-- Risk of rain 2
-- Cyberpunk 2077
-- Dying Light
 - Snowrunner
-- The forest
-- Subnautica
-- FarCry 4
-- FarCry 5
-- The long dark
-- Ultrakill
+- The Forest
+- The Long Dark
 - Disco Elysium
 - Scrap Mechanic
-- Watch Dogs 2
-- Devil May Cry 5
-- Don't starve together
-- ETS 2
-- Farming Simulator
+- Don't Starve Together
+- Euro Truck Simulator 2
+- Farming Simulator 17, 19, 22
+- Dying Light
 - Skyrim
+- Fallout 4
+
+#### Upcoming Games:
+- Dead Cells *
+- Doom 3 *
+- Risk of rain 2 *
+- Cyberpunk 2077 *
+- Subnautica *
+- FarCry 4 *
+- FarCry 5 *
+- Ultrakill *
+- Watch Dogs 2 *
+- Devil May Cry 5 *
 - Minecraft
