@@ -30,12 +30,12 @@ pip install -r requirements.txt
 	4) Select the necessary checkboxes
 	5) Select copy or archive
 	6) Click the **'Start'** button
-	
+
 	- **SavePlacer**:
-	    1) Click on the **'SavePlacer'** button at the top of the main window and click **'Open'**. 
-	    2) Select **'Archive'** or **'Folder'** depending on the format of the SaveFinder file you created. 
-	    3) Specify the path to this file. 
-	    4) Click on the **'Start'** button
+		- Click on the **'SavePlacer'** button at the top of the main window and click **'Open'**. 
+		- Select **'Archive'** or **'Folder'** depending on the format of the SaveFinder file you created. 
+		- Specify the path to this file. 
+		- Click on the **'Start'** button
 
 ### Future Steps:
 1) Add support for more games.
