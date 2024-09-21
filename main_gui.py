@@ -2,13 +2,16 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter.messagebox import showerror, showwarning, showinfo
+from tkinter import filedialog
 import os
 import configparser
 import json
 import shutil
-from rich.console import Console
+import zipfile
 from rich import print
 from time import perf_counter
+from datetime import datetime
+
 
 roaming_path = f"C:\\Users\\{os.getlogin()}\\AppData\\Roaming"
 local_path = f"C:\\Users\\{os.getlogin()}\\AppData\\Local"
@@ -79,10 +82,10 @@ def first_run():
 						for key, value in values.items():
 								configfile.write(f'{key} = {value}\n')
 						configfile.write('\n')
-	if os.path.exists(".\Archivated"):
+	if os.path.exists(f".\\Archivated"):
 		pass
 	else:
-		os.mkdir(".\Archivated")
+		os.mkdir(f".\\Archivated")
 	
 	configg = configparser.ConfigParser()
 	configg.read("config.ini")
@@ -176,7 +179,7 @@ class game():
 									config.write(configfile)
 								break
 		else:
-			if config.get("GAME PATHS", self.cfg_name) != '':
+			if config.get("GAME PATHS", self.cfg_name) != '' and os.path.exists(config.get("GAME PATHS", self.cfg_name)):
 				gameCounter += 1
 				games_saves_paths.append(config.get('GAME PATHS', self.cfg_name))
 				games_list.insert(0, f"{self.name} - {config.get('GAME PATHS', self.cfg_name)}")
@@ -196,7 +199,7 @@ def create_saves_json(json_path):
 	for path in selected_paths:
 		gamename = os.path.basename(path)
 		saves[gamename] = {"path": path, "username": username}
-  
+	
 	with open(json_path, 'w', encoding='utf-8') as f:
 		json.dump(saves, f, ensure_ascii=False, indent=4)
 
@@ -327,59 +330,171 @@ def select_all():
 			print(i.get())
 		select_all = True
 def copy_and_archive(): # Функция для копирования и архивации
-		# print(value_inside.get(), " - ", options_list[2])
-		
 		if all(i.get() == 0 for i in check_vars):
 				showerror(title="SaveFinder&Archiver", message="No files selected!")
 				return
 
-		# selected_option = value_inside.get()
-
+		current_datetime = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+	
+	
 		global selected_paths
 		selected_paths = [games_saves_paths[i] for i in range(len(games_saves_paths)) if check_vars[i].get() == 1]
-
-		# if selected_option == options_list[1]:  # Archive to individual archives
-		# 		for i in range(len(games_saves_paths)):
-		# 				if check_vars[i].get() == 1:
-		# 						destination = os.path.join(".\\Archivated", "temp."+os.path.basename(games_saves_paths[i]))
-		# 						shutil.copytree(games_saves_paths[i], destination, dirs_exist_ok=True)
-		# 						shutil.make_archive(destination.replace("temp.", ""), 'zip', destination)
-		# 						shutil.rmtree(destination)
-
-		# 		showinfo(title="SaveFinder&Archiver", message="Files successfully archived!")
+	
 		if type_var.get() == "archive":
-		# elif selected_option == options_list[2]:  # Archive all to one archive
 				if selected_paths:
-						archive_destination = ".\\Archivated\\temp.All saves"
+						archive_destination = f".\\Archivated\\temp.savefind-{current_datetime}"
 						for path in selected_paths:
 								shutil.copytree(path, os.path.join(archive_destination, os.path.basename(path)), dirs_exist_ok=True)
 						
-						create_saves_json(".\\Archivated\\temp.All saves\\savepaths.json")
+						create_saves_json(f".\\Archivated\\temp.savefind-{current_datetime}\\savepaths.json")
 
 						shutil.make_archive(archive_destination.replace("temp.", ""), 'zip', archive_destination)
 						shutil.rmtree(archive_destination)
 						showinfo(title="SaveFinder&Archiver", message="Files successfully archived to one archive!")
 
-		# elif selected_option == options_list[3]:  # Copy to individual folders
-		# 		for i in range(len(games_saves_paths)):
-		# 				if check_vars[i].get() == 1:
-		# 						destination = os.path.join(".\\Archivated", os.path.basename(games_saves_paths[i]))
-		# 						shutil.copytree(games_saves_paths[i], destination, dirs_exist_ok=True)
-
-		# 		showinfo(title="SaveFinder&Archiver", message="Files successfully copied!")
 		elif type_var.get() == "copy":
-		# elif selected_option == options_list[4]:  # Copy all to one folder
-				archive_destination = ".\\Archivated\\All saves"
+				archive_destination = f".\\Archivated\\savefind-{current_datetime}"
 				os.makedirs(archive_destination, exist_ok=True)  # Ensure the directory exists
 				
 				for i in range(len(games_saves_paths)):
 						if check_vars[i].get() == 1:
 								shutil.copytree(games_saves_paths[i], os.path.join(archive_destination, os.path.basename(games_saves_paths[i])), dirs_exist_ok=True)
 				
-				create_saves_json(".\\Archivated\\All saves\\savepaths.json")
+				create_saves_json(f".\\Archivated\\savefind-{current_datetime}\\savepaths.json")
 
 				showinfo(title="SaveFinder&Archiver", message="Files successfully copied to one folder!")
 		print("SHOOO: ", selected_paths)
+
+
+
+
+placer_window = None
+
+def create_placer_window():
+	global placer_window
+	def select_folder():
+		entry.delete(0, tk.END)
+		# Открываем диалог выбора папки
+		if filetype_var.get() == "folder":
+			folder_path = filedialog.askdirectory()
+			if folder_path:  # Проверяем, что путь не пустой
+					entry.insert(0, folder_path)  # Вставляем выбранный путь
+		elif filetype_var.get() == "archive":
+			folder_path = filedialog.askopenfilename()
+			if folder_path:  # Проверяем, что путь не пустой
+					entry.insert(0, folder_path)  # Вставляем выбранный путь
+	def place_saves():
+		if os.path.isfile(entry.get()) or os.path.isdir(entry.get()):
+			if zipfile.is_zipfile(entry.get()):
+				shutil.unpack_archive(entry.get(), entry.get().replace(".zip", ""))
+				with open(os.path.join(entry.get().replace(".zip", ""), "savepaths.json"), 'r', encoding='utf-8') as f:
+					data = json.load(f)
+					for save in data.values():
+						path = save["path"]
+						username = save["username"]
+						game_name = os.path.basename(path)
+						path = path.replace(username, os.getlogin()).replace(game_name, "")
+						print(f"{entry.get().replace(".zip", "")}/{game_name}")
+						shutil.copytree(f"{entry.get().replace(".zip", "")}/{game_name}", path+game_name, dirs_exist_ok=True)
+				shutil.rmtree(entry.get().replace('.zip', ''))
+		
+			if os.path.isdir(entry.get()):
+				with open(os.path.join(entry.get(), "savepaths.json"), 'r', encoding='utf-8') as f:
+					data = json.load(f)
+					for save in data.values():
+						path = save["path"]
+						username = save["username"]
+						game_name = os.path.basename(path)
+						path = path.replace(username, os.getlogin()).replace(game_name, "")
+						print(f"{entry.get()}/{game_name}")
+						shutil.copytree(f"{entry.get()}/{game_name}", path+game_name, dirs_exist_ok=True)
+			showinfo(title="SavePlacer", message="Files successfully placed!")
+		else:
+			showerror(title="SavePlacer", message="Invalid path!")
+	def is_valid_path(newval):
+		path = newval
+		# Проверяем, является ли путь папкой
+		if os.path.isdir(path):
+				# Проверяем наличие файла savepaths.json в папке
+				if 'savepaths.json' in os.listdir(path):
+						start_place_btn.config(state=NORMAL)
+						error_lb.config(foreground="green")
+						errmsg.set("Путь действителен")
+						return True
+
+		# Проверяем, является ли путь zip-архивом
+		if zipfile.is_zipfile(path):
+				# Проверяем, содержит ли имя файла 'savefind-'
+				if 'savefind-' in os.path.basename(path):
+						start_place_btn.config(state=NORMAL)
+						error_lb.config(foreground="green")
+						errmsg.set("Путь действителен")
+						return True
+		
+		start_place_btn.config(state=DISABLED)
+		error_lb.config(foreground="red")
+		errmsg.set("Путь недействителен")
+		return False
+	 
+	if placer_window is None or not placer_window.winfo_exists():
+		placer_window = Toplevel(main_w)
+		placer_window.title("SavePlacer")
+		placer_window.geometry("300x170")
+
+		placer_header = Label(placer_window, text="SavePlacer", font=("JetBrains Mono", 14))
+		placer_header.pack(side=TOP)
+	
+		separator = ttk.Separator(placer_window, orient="horizontal")
+		separator.pack(fill=X, padx=10, pady=5)
+		
+		radio_frame = ttk.Frame(placer_window, borderwidth=0)
+		radio_frame.pack(after=separator, padx=0, pady=0)
+
+		global sel_folder_rb
+		filetype_var = StringVar()
+		sel_folder_rb = ttk.Radiobutton(radio_frame, text="Folder", variable=filetype_var, value="folder", takefocus=0)
+		sel_folder_rb.pack(side=LEFT)
+
+		global sel_archive_rb
+		sel_archive_rb = ttk.Radiobutton(radio_frame, text="Archive", variable=filetype_var, value="archive", takefocus=0)
+		sel_archive_rb.pack(side=LEFT, padx=10)
+		filetype_var.set("archive")
+	
+		fileask_frame = ttk.Frame(placer_window)
+		fileask_frame.pack(anchor=NW, fill=X, padx=4)
+
+		entry = ttk.Entry(fileask_frame, width=30, validate="key", validatecommand=(placer_window.register(is_valid_path), "%P"))
+		entry.pack(side=tk.LEFT, fill=tk.X, padx=[5,0], pady=3, expand=True)
+	
+		# Создаем кнопку
+		global button
+		button = ttk.Button(fileask_frame, text="Select", takefocus=0, command=select_folder)
+		button.pack(side=tk.LEFT, padx=[3,5], pady=3)
+
+		errmsg = StringVar()
+		error_lb = ttk.Label(placer_window, foreground="red", textvariable=errmsg)
+		error_lb.pack(anchor=NW, padx=[5,0])
+
+		global start_place_btn
+		start_place_btn = ttk.Button(placer_window, text="Start", takefocus=0, state=DISABLED, command=place_saves)
+		start_place_btn.pack(side=TOP, padx=10, pady=10)
+
+		def change_lang():
+			if config.get('SETTINGS', 'lang') == 'en':
+				sel_folder_rb.config(text="Folder")
+				sel_archive_rb.config(text="Archive")
+				button.config(text="Select")
+				start_place_btn.config(text="Start")
+    
+			if config.get('SETTINGS', 'lang') == 'ru':
+				sel_folder_rb.config(text="Папка")
+				sel_archive_rb.config(text="Архив")
+				button.config(text="Выбрать")
+				start_place_btn.config(text="Запуск")
+		change_lang()
+	else:
+			# Если окно уже открыто, просто передаем ему фокус
+			placer_window.focus()
 
 def change_language(lang):
 	global options_list
@@ -395,6 +510,11 @@ def change_language(lang):
 		scan_new_cb.config(text="Scan for new saves")
 		archive_rb.config(text="Archive")
 		copy_rb.config(text="Copy")
+  
+		# sel_folder_rb.config(text="Folder")
+		# sel_archive_rb.config(text="Archive")
+		# button.config(text="Select")
+		# start_place_btn.config(text="Start")
 	elif lang == 'ru':
 		header.config(text="SaveFinder")
 		# select_type_lb.config(text="Выберите тип\nархивирования:")
@@ -405,7 +525,13 @@ def change_language(lang):
 		scan_new_cb.config(text="Искать новые сохранения")
 		archive_rb.config(text="Архив")
 		copy_rb.config(text="Копия")
+  
+		# sel_folder_rb.config(text="Папка")
+		# sel_archive_rb.config(text="Архив")
+		# button.config(text="Выбрать")
+		# start_place_btn.config(text="Запуск")
 	config.set('SETTINGS', 'lang', f'{lang}')
+
 
 main_w = Tk()
 main_w.title("SaveFinder & Archiver")
@@ -420,6 +546,13 @@ lang_cas = menu_panel.add_cascade(label="Language", menu=language_menu)
 
 language_menu.add_command(label="English", command= lambda:change_language('en'))
 language_menu.add_command(label="Русский", command= lambda:change_language('ru'))
+
+
+placer_menu = tk.Menu(menu_panel, tearoff=0)
+placer_cas = menu_panel.add_cascade(label="SavePlacer", menu=placer_menu)
+
+placer_menu.add_command(label="Open", command= create_placer_window)
+
 
 header = Label(main_w, text="SaveFinder", font=("JetBrains Mono", 30))
 header.pack()
@@ -453,23 +586,6 @@ scrollbar.config(command=games_list.xview)
 right_frame = Frame(main_w) # Правая часть
 right_frame.pack(side=RIGHT, padx=10, pady=10, fill=Y)
 
-# select_type_lb = Label(right_frame, text="Select archive\ntype:", font=("JetBrains Mono", 14), justify=CENTER)
-# select_type_lb.pack(anchor=W)
-
-# options_list = [
-# 	"",
-# 	"Archive to individual archives",
-# 	"Archive all to one archive",
-# 	"Copy to individual folders",
-# 	"Copy all to one folder"
-# 				]
-
-# value_inside = StringVar()
-# value_inside.set(options_list[1])
-
-# question_menu = ttk.OptionMenu(right_frame, value_inside, *options_list)
-# question_menu.pack(fill=X, anchor=W) 
-
 style = ttk.Style()
 style.configure('TButton', font=('JetBrains Mono', 10))
 
@@ -492,6 +608,7 @@ select_all_btn.pack(fill=X)
 
 cb_frame = ttk.Frame(borderwidth=2, relief=SOLID, padding=[7,7], width=157)
 cb_frame.pack(anchor=NW, fill=X, after=select_all_btn, padx=0, pady=5)
+	
 
 first_run()
 change_language(str(config.get('SETTINGS', 'lang')))
