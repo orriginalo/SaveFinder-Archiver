@@ -20,6 +20,8 @@ documents_path = f"C:\\Users\\{os.getlogin()}\\Documents"
 steam_path = "C:\\Program Files (x86)\\Steam"
 users_path = f"C:\\Users\\{os.getlogin()}"
 
+other_paths = []
+
 gameCounter = 0
 games_saves_paths = []
 check_vars = []
@@ -41,6 +43,12 @@ def first_run():
 		},
 		'SETTINGS': {
 				'lang': 'en'
+		},
+		'FOLDERS WITH GAMES': {
+			'folder_1': '',
+			'folder_2': '',
+			'folder_3': '',
+			'folder_4': '',
 		},
 		'GAME PATHS': {
 				'terraria_path': '',
@@ -91,7 +99,24 @@ def first_run():
 	configg.read("config.ini")
 	global config
 	config = configg
+ 
+	for el in config["FOLDERS WITH GAMES"].values():
+		if el != '':
+			other_paths.append(el)
+ 
+def set_entries(entry1, entry2, entry3, entry4):
+	if config.get("FOLDERS WITH GAMES", "folder_1") != '':
+		entry1.insert(0, config.get("FOLDERS WITH GAMES", "folder_1"))
 
+	if config.get("FOLDERS WITH GAMES", "folder_2") != '':
+		entry2.insert(0, config.get("FOLDERS WITH GAMES", "folder_2"))
+
+	if config.get("FOLDERS WITH GAMES", "folder_3") != '':
+		entry3.insert(0, config.get("FOLDERS WITH GAMES", "folder_3"))
+  
+	if config.get("FOLDERS WITH GAMES", "folder_4") != '':
+		entry4.insert(0, config.get("FOLDERS WITH GAMES", "folder_4"))
+  
 class game():
 	def __init__(self, name, folder_name, where_search_path, cfg_name, file_in: str = None, exception_in_path: str = None, second_folder_name: str = None):
 		self.folder_name = folder_name
@@ -105,13 +130,31 @@ class game():
 	def find_game(self):
 		global gameCounter
 		if scan_new_var.get() == 1 and (config.get('GAME PATHS', self.cfg_name) == '' or (not os.path.exists(config.get('GAME PATHS', self.cfg_name)))):
-			for root, dirs, files in os.walk(self.path):
-				for dirname in dirs:
-					if dirname == self.folder_name or dirname == self.second_folder_name:
-						if self.file_in != None:
-							if self.exception_in_path != None:
-								if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
-									if self.exception_in_path not in os.path.join(root, dirname):
+			if self.path != other_paths:
+				for root, dirs, files in os.walk(self.path):
+					for dirname in dirs:
+						if dirname == self.folder_name or dirname == self.second_folder_name:
+							if self.file_in != None:
+								if self.exception_in_path != None:
+									if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
+										if self.exception_in_path not in os.path.join(root, dirname):
+											gameCounter += 1
+											print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
+											games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
+											games_saves_paths.append(os.path.join(root, dirname))
+						
+											tosave_val = IntVar()
+											tosave_val.set(0)
+											cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
+											cb.pack(anchor=W)
+											check_vars.append(tosave_val)
+						
+											config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
+											with open('config.ini', 'w') as configfile:
+												config.write(configfile)
+											break 
+								else:
+									if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
 										gameCounter += 1
 										print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
 										games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
@@ -128,56 +171,114 @@ class game():
 											config.write(configfile)
 										break 
 							else:
-								if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
+								if self.exception_in_path != None:
+									if self.exception_in_path not in os.path.join(root, dirname):
+										gameCounter += 1
+										print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
+										games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
+										games_saves_paths.append(os.path.join(root, dirname))
+					
+										tosave_val = IntVar()
+										tosave_val.set(0)
+										cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
+										cb.pack(anchor=W)
+										check_vars.append(tosave_val)
+					
+										config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
+										with open('config.ini', 'w') as configfile:
+											config.write(configfile)
+										break 
+								else:
 									gameCounter += 1
 									print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
 									games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
 									games_saves_paths.append(os.path.join(root, dirname))
-				 
+					
 									tosave_val = IntVar()
 									tosave_val.set(0)
 									cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
 									cb.pack(anchor=W)
 									check_vars.append(tosave_val)
-				 
+					
 									config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
 									with open('config.ini', 'w') as configfile:
 										config.write(configfile)
-									break 
-						else:
-							if self.exception_in_path != None:
-								if self.exception_in_path not in os.path.join(root, dirname):
-									gameCounter += 1
-									print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
-									games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
-									games_saves_paths.append(os.path.join(root, dirname))
-				 
-									tosave_val = IntVar()
-									tosave_val.set(0)
-									cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
-									cb.pack(anchor=W)
-									check_vars.append(tosave_val)
-				 
-									config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
-									with open('config.ini', 'w') as configfile:
-										config.write(configfile)
-									break 
-							else:
-								gameCounter += 1
-								print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
-								games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
-								games_saves_paths.append(os.path.join(root, dirname))
-				
-								tosave_val = IntVar()
-								tosave_val.set(0)
-								cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
-								cb.pack(anchor=W)
-								check_vars.append(tosave_val)
-				
-								config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
-								with open('config.ini', 'w') as configfile:
-									config.write(configfile)
-								break
+									break
+			else:
+				for path in other_paths:
+					for root, dirs, files in os.walk(path):
+						for dirname in dirs:
+							if dirname == self.folder_name or dirname == self.second_folder_name:
+								if self.file_in != None:
+									if self.exception_in_path != None:
+										if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
+											if self.exception_in_path not in os.path.join(root, dirname):
+												gameCounter += 1
+												print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
+												games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
+												games_saves_paths.append(os.path.join(root, dirname))
+							
+												tosave_val = IntVar()
+												tosave_val.set(0)
+												cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
+												cb.pack(anchor=W)
+												check_vars.append(tosave_val)
+							
+												config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
+												with open('config.ini', 'w') as configfile:
+													config.write(configfile)
+												break 
+									else:
+										if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
+											gameCounter += 1
+											print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
+											games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
+											games_saves_paths.append(os.path.join(root, dirname))
+						
+											tosave_val = IntVar()
+											tosave_val.set(0)
+											cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
+											cb.pack(anchor=W)
+											check_vars.append(tosave_val)
+						
+											config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
+											with open('config.ini', 'w') as configfile:
+												config.write(configfile)
+											break 
+								else:
+									if self.exception_in_path != None:
+										if self.exception_in_path not in os.path.join(root, dirname):
+											gameCounter += 1
+											print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
+											games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
+											games_saves_paths.append(os.path.join(root, dirname))
+						
+											tosave_val = IntVar()
+											tosave_val.set(0)
+											cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
+											cb.pack(anchor=W)
+											check_vars.append(tosave_val)
+						
+											config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
+											with open('config.ini', 'w') as configfile:
+												config.write(configfile)
+											break 
+									else:
+										gameCounter += 1
+										print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
+										games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
+										games_saves_paths.append(os.path.join(root, dirname))
+						
+										tosave_val = IntVar()
+										tosave_val.set(0)
+										cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
+										cb.pack(anchor=W)
+										check_vars.append(tosave_val)
+						
+										config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
+										with open('config.ini', 'w') as configfile:
+											config.write(configfile)
+										break
 		else:
 			if config.get("GAME PATHS", self.cfg_name) != '' and os.path.exists(config.get("GAME PATHS", self.cfg_name)):
 				gameCounter += 1
@@ -191,7 +292,6 @@ class game():
 				check_vars.append(tosave_val)
 
 				print(f"[bold white]{gameCounter}. [bold blue]{self.name}[bold white][italic] In:", f"{config.get('GAME PATHS', self.cfg_name)}")
-
 
 def create_saves_json(json_path):
 	saves = {}
@@ -305,6 +405,8 @@ def find_games():
 	fallout4 = game("Fallout 4", "Fallout4", documents_path, "fallout4_path")
 	fallout4.find_game()
  
+	deadcells = game("Dead Cells", "save", other_paths, "deadcells_path", file_in='user_0.dat')
+	deadcells.find_game()
  
 	end = perf_counter()
  
@@ -390,11 +492,19 @@ def create_placer_window():
 				with open(os.path.join(entry.get().replace(".zip", ""), "savepaths.json"), 'r', encoding='utf-8') as f:
 					data = json.load(f)
 					for save in data.values():
-						path = save["path"]
+						if os.getlogin() not in save["path"]:
+							for path in other_paths:
+								for root, dirs, files in os.walk(path):
+									for dirname in dirs:
+										if dirname == os.path.dirname(save["path"]):
+											path = os.path.join(root, dirname)
+						else:
+							path = save["path"]
 						username = save["username"]
 						game_name = os.path.basename(path)
 						path = path.replace(username, os.getlogin()).replace(game_name, "")
-						print(f"{entry.get().replace(".zip", "")}/{game_name}")
+						print("PATH: ", path)
+						# print(f"{entry.get().replace(".zip", "")}/{game_name}")
 						shutil.copytree(f"{entry.get().replace(".zip", "")}/{game_name}", path+game_name, dirs_exist_ok=True)
 				shutil.rmtree(entry.get().replace('.zip', ''))
 		
@@ -405,6 +515,13 @@ def create_placer_window():
 						path = save["path"]
 						username = save["username"]
 						game_name = os.path.basename(path)
+						if os.getlogin() not in save["path"]:
+							for path in other_paths:
+								for root, dirs, files in os.walk(path):
+									for dirname in dirs:
+										if dirname == os.path.basename(save["path"]):
+											path = os.path.join(root, dirname)
+						print("PATH: ", path+game_name)
 						path = path.replace(username, os.getlogin()).replace(game_name, "")
 						print(f"{entry.get()}/{game_name}")
 						shutil.copytree(f"{entry.get()}/{game_name}", path+game_name, dirs_exist_ok=True)
@@ -485,7 +602,7 @@ def create_placer_window():
 				sel_archive_rb.config(text="Archive")
 				button.config(text="Select")
 				start_place_btn.config(text="Start")
-    
+		
 			if config.get('SETTINGS', 'lang') == 'ru':
 				sel_folder_rb.config(text="Папка")
 				sel_archive_rb.config(text="Архив")
@@ -496,9 +613,136 @@ def create_placer_window():
 			# Если окно уже открыто, просто передаем ему фокус
 			placer_window.focus()
 
+
+other_paths_window = None
+def create_other_paths_window():
+	global other_paths_window
+	
+ 
+	def ask_dir(num):
+		global config
+	
+ 
+		match(num):
+			case 1:
+		 
+				entry1.delete(0, END)
+				entry1.insert(0, filedialog.askdirectory())
+				if entry1.get() != '':
+					other_paths.append(entry1.get())
+					config.set('FOLDERS WITH GAMES', 'folder_1', entry1.get())
+					print(f"SETTED {entry1.get()}")
+				else:
+					other_paths.remove(entry1.get())
+					config.set('FOLDERS WITH GAMES', 'folder_1', '')
+		 
+			case 2:
+				entry2.delete(0, END)
+				entry2.insert(0, filedialog.askdirectory())
+				if entry2.get() != '':
+					other_paths.append(entry2.get())
+					config.set('FOLDERS WITH GAMES', 'folder_2', entry2.get())
+				else:
+					other_paths.remove(entry2.get())
+					config.set('FOLDERS WITH GAMES', 'folder_2', '')
+		 
+			case 3:
+				entry3.delete(0, END)
+				entry3.insert(0, filedialog.askdirectory())
+				if entry3.get() != '':
+					other_paths.append(entry3.get())
+					config.set('FOLDERS WITH GAMES', 'folder_3', entry3.get())
+				else:
+					other_paths.remove(entry3.get())
+					config.set('FOLDERS WITH GAMES', 'folder_3', '')
+			case 4:
+				entry4.delete(0, END)
+				entry4.insert(0, filedialog.askdirectory())
+				if entry4.get() != '':
+					other_paths.append(entry4.get())
+					config.set('FOLDERS WITH GAMES', 'folder_4', entry4.get())
+				else:
+					other_paths.remove(entry4.get())
+					config.set('FOLDERS WITH GAMES', 'folder_4', '')
+		
+		with open('config.ini', 'w') as configfile:
+			config.write(configfile)
+	
+	if other_paths_window is None or not other_paths_window.winfo_exists():
+		other_paths_window = Toplevel(main_w)
+		other_paths_window.title("Other paths")
+		other_paths_window.geometry("300x170")
+
+		folder1_frame = ttk.Frame(other_paths_window, borderwidth=2)
+		folder1_frame.pack(anchor=NW, fill=X, padx=4)
+		
+		global entry1, entry2, entry3, entry4
+  
+		label1 = ttk.Label(folder1_frame, text="You can select other folders with your games", wraplength=200, justify=CENTER)
+		label1.pack(side=TOP, padx=[5,0], pady=3)
+  
+		entry1 = ttk.Entry(folder1_frame, width=10)
+		entry1.pack(side=tk.LEFT, fill=tk.X, padx=[5,0], pady=3, expand=True)
+
+		select_btn1 = ttk.Button(folder1_frame, text="Select", takefocus=0, width=7, command=lambda:ask_dir(1))
+		select_btn1.pack(side=tk.LEFT, padx=[3,2], pady=0)
+	
+
+		folder2_frame = ttk.Frame(other_paths_window, borderwidth=2)
+		folder2_frame.pack(anchor=NW, fill=X, padx=4)
+		
+		entry2 = ttk.Entry(folder2_frame, width=10)
+		entry2.pack(side=tk.LEFT, fill=tk.X, padx=[5,0], pady=3, expand=True)
+
+		select_btn2 = ttk.Button(folder2_frame, text="Select", takefocus=0, width=7, command=lambda:ask_dir(2))
+		select_btn2.pack(side=tk.LEFT, padx=[3,2], pady=0)
+	
+	
+		folder3_frame = ttk.Frame(other_paths_window, borderwidth=2)
+		folder3_frame.pack(anchor=NW, fill=X, padx=4)
+		
+		entry3 = ttk.Entry(folder3_frame, width=10)
+		entry3.pack(side=tk.LEFT, fill=tk.X, padx=[5,0], pady=3, expand=True)
+
+		select_btn3 = ttk.Button(folder3_frame, text="Select", takefocus=0, width=7, command=lambda:ask_dir(3))
+		select_btn3.pack(side=tk.LEFT, padx=[3,2], pady=0)
+	
+	
+		folder4_frame = ttk.Frame(other_paths_window, borderwidth=2)
+		folder4_frame.pack(anchor=NW, fill=X, padx=4)
+		
+		entry4 = ttk.Entry(folder4_frame, width=10)
+		entry4.pack(side=tk.LEFT, fill=tk.X, padx=[5,0], pady=3, expand=True)
+
+		select_btn4 = ttk.Button(folder4_frame, text="Select", takefocus=0, width=7, command=lambda:ask_dir(4))
+		select_btn4.pack(side=tk.LEFT, padx=[3,2], pady=0)
+
+		set_entries(entry1, entry2, entry3, entry4)
+  
+		def change_lang():
+			if config.get('SETTINGS', 'lang') == 'en':
+				select_btn1.config(text="Select")
+				select_btn2.config(text="Select")
+				select_btn3.config(text="Select")
+				select_btn4.config(text="Select")
+
+				label1.config(text="You can select other folders with your games")
+		
+			if config.get('SETTINGS', 'lang') == 'ru':
+				select_btn1.config(text="Выбрать")
+				select_btn2.config(text="Выбрать")
+				select_btn3.config(text="Выбрать")
+				select_btn4.config(text="Выбрать")
+
+				label1.config(text="Вы можете выбрать другие папки с вашими играми")
+		change_lang()
+
+	else:
+			# Если окно уже открыто, просто передаем ему фокус
+			other_paths_window.focus()
+
 def change_language(lang):
 	global options_list
-	config.set('SETTINGS', 'lang', f'{lang}')
 	print(config.get('SETTINGS', 'lang'))
 	if lang == 'en':
 		header.config(text="SaveFinder")
@@ -510,7 +754,7 @@ def change_language(lang):
 		scan_new_cb.config(text="Scan for new saves")
 		archive_rb.config(text="Archive")
 		copy_rb.config(text="Copy")
-  
+	
 		# sel_folder_rb.config(text="Folder")
 		# sel_archive_rb.config(text="Archive")
 		# button.config(text="Select")
@@ -525,12 +769,14 @@ def change_language(lang):
 		scan_new_cb.config(text="Искать новые сохранения")
 		archive_rb.config(text="Архив")
 		copy_rb.config(text="Копия")
-  
+	
 		# sel_folder_rb.config(text="Папка")
 		# sel_archive_rb.config(text="Архив")
 		# button.config(text="Выбрать")
 		# start_place_btn.config(text="Запуск")
 	config.set('SETTINGS', 'lang', f'{lang}')
+	with open('config.ini', 'w') as configfile:
+		config.write(configfile)
 
 
 main_w = Tk()
@@ -553,6 +799,10 @@ placer_cas = menu_panel.add_cascade(label="SavePlacer", menu=placer_menu)
 
 placer_menu.add_command(label="Open", command= create_placer_window)
 
+other_paths_menu = tk.Menu(menu_panel, tearoff=0)
+other_paths_cas = menu_panel.add_cascade(label="Other paths", menu=other_paths_menu)
+
+other_paths_menu.add_command(label="Add", command=create_other_paths_window)
 
 header = Label(main_w, text="SaveFinder", font=("JetBrains Mono", 30))
 header.pack()
@@ -602,7 +852,7 @@ copy_rb.pack(side=LEFT)
 archive_rb = ttk.Radiobutton(radio_frame, text="Archive", variable=type_var, value="archive", takefocus=0)
 archive_rb.pack(side=LEFT, padx=10)
 type_var.set("archive")
- 
+
 select_all_btn = ttk.Button(right_frame, text="Select all", style='TButton',state=DISABLED,takefocus=0 ,command=select_all)
 select_all_btn.pack(fill=X)
 
@@ -612,5 +862,6 @@ cb_frame.pack(anchor=NW, fill=X, after=select_all_btn, padx=0, pady=5)
 
 first_run()
 change_language(str(config.get('SETTINGS', 'lang')))
+
 
 main_w.mainloop()

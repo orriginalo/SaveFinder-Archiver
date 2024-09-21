@@ -9,7 +9,7 @@
 ### GUI:
 - Archiving into one archive
 - Copying into one folder
-- 
+- Recovering saves from a created file
 
 ## 1. Installation
 ```python
@@ -29,7 +29,7 @@ pip install -r requirements.txt
 	3) Click the **'Start finding'** button
 	4) Select the necessary checkboxes
 	5) Select copy or archive
-	6) Click the **'Start'** button
+	6) Click the **'Start'** button (files will be copied to the Archivated folder, which will appear in the directory with the program when you first launch it)
 
 	- **SavePlacer**:
 		- Click on the **'SavePlacer'** button at the top of the main window and click **'Open'**. 
@@ -37,9 +37,10 @@ pip install -r requirements.txt
 		- Specify the path to this file. 
 		- Click on the **'Start'** button
 
+###### If you want the program to search not only in C:/Users (as per default), then click the **'Other paths'** button at the top of the program, then the **'Add'** button. And by clicking the Select button, specify the path where your games are located. There are only 4 options so far, I think that more is not needed.
 ### Future Steps:
-1) Add support for more games.
-
+1) Add the option to choose a different folder where the files will be backed up.
+2) Add support for more games.
 ---
 
 #### Supported Games:
@@ -68,9 +69,8 @@ pip install -r requirements.txt
 - Dying Light
 - Skyrim
 - Fallout 4
-
-#### Upcoming Games:
 - Dead Cells *
+#### Upcoming Games:
 - Doom 3 *
 - Risk of rain 2 *
 - Cyberpunk 2077 *
