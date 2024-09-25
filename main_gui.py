@@ -12,7 +12,6 @@ from rich import print
 from time import perf_counter
 from datetime import datetime
 
-
 roaming_path = f"C:\\Users\\{os.getlogin()}\\AppData\\Roaming"
 local_path = f"C:\\Users\\{os.getlogin()}\\AppData\\Local"
 locallow_path = f"C:\\Users\\{os.getlogin()}\\AppData\\LocalLow"
@@ -118,7 +117,7 @@ def set_entries(entry1, entry2, entry3, entry4):
 		entry4.insert(0, config.get("FOLDERS WITH GAMES", "folder_4"))
   
 class game():
-	def __init__(self, name, folder_name, where_search_path, cfg_name, file_in: str = None, exception_in_path: str = None, second_folder_name: str = None):
+	def __init__(self, name, folder_name, where_search_path, cfg_name, file_in: str = None, exception_in_path: str = None, second_folder_name: str = None, folder_in_path: str = None):
 		self.folder_name = folder_name
 		self.second_folder_name = second_folder_name
 		self.path = where_search_path
@@ -754,11 +753,17 @@ def change_language(lang):
 		scan_new_cb.config(text="Scan for new saves")
 		archive_rb.config(text="Archive")
 		copy_rb.config(text="Copy")
-	
-		# sel_folder_rb.config(text="Folder")
-		# sel_archive_rb.config(text="Archive")
-		# button.config(text="Select")
-		# start_place_btn.config(text="Start")
+
+		menu_panel.entryconfig(1, label="Language")
+		menu_panel.entryconfig(3, label="Other paths")
+  
+		language_menu.entryconfig(0, label="English")
+		language_menu.entryconfig(1, label="Russian")
+  
+		placer_menu.entryconfig(0, label="Open")
+  
+		other_paths_menu.entryconfig(0, label="Add")
+  
 	elif lang == 'ru':
 		header.config(text="SaveFinder")
 		# select_type_lb.config(text="Выберите тип\nархивирования:")
@@ -770,10 +775,16 @@ def change_language(lang):
 		archive_rb.config(text="Архив")
 		copy_rb.config(text="Копия")
 	
-		# sel_folder_rb.config(text="Папка")
-		# sel_archive_rb.config(text="Архив")
-		# button.config(text="Выбрать")
-		# start_place_btn.config(text="Запуск")
+
+		menu_panel.entryconfig(1, label="Язык")
+		menu_panel.entryconfig(3, label="Прочие пути")
+		language_menu.entryconfig(0, label="Англ.")
+		language_menu.entryconfig(1, label="Русский")
+  
+		placer_menu.entryconfig(0, label="Открыть")
+  
+		other_paths_menu.entryconfig(0, label="Добавить")
+  
 	config.set('SETTINGS', 'lang', f'{lang}')
 	with open('config.ini', 'w') as configfile:
 		config.write(configfile)
