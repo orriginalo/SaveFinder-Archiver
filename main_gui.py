@@ -141,7 +141,7 @@ class game():
 	# 	with open('config.ini', 'w') as configfile:
 	# 		config.write(configfile)
 
-	def find_game(self, root, dirname):
+	def find_game(self):
 		global gameCounter
 		if scan_new_var.get() == 1 and (config.get('GAME PATHS', self.cfg_name) == '' or (not os.path.exists(config.get('GAME PATHS', self.cfg_name)))):
 			if self.path != other_paths:
