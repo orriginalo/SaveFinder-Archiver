@@ -1,3 +1,4 @@
+<img src="https://img.shields.io/github/release/orriginalo/SaveFinder-Archiver"/>
 [English readme](https://github.com/orriginalo/SaveFinder-Archiver/blob/main/README.md) • [Русский readme](https://github.com/orriginalo/SaveFinder-Archiver/blob/main/README.ru.md)
 
 #### This application is for copying and archiving saves and settings in certain games.
