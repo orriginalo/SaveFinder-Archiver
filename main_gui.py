@@ -112,10 +112,10 @@ def set_entries(entry1, entry2, entry3, entry4):
 
 	if config.get("FOLDERS WITH GAMES", "folder_3") != '':
 		entry3.insert(0, config.get("FOLDERS WITH GAMES", "folder_3"))
-  
+	
 	if config.get("FOLDERS WITH GAMES", "folder_4") != '':
 		entry4.insert(0, config.get("FOLDERS WITH GAMES", "folder_4"))
-  
+	
 class game():
 	def __init__(self, name, folder_name, where_search_path, cfg_name, file_in: str = None, exception_in_path: str = None, second_folder_name: str = None, folder_in_path: str = None):
 		self.folder_name = folder_name
@@ -125,8 +125,23 @@ class game():
 		self.name = name
 		self.file_in = file_in
 		self.exception_in_path = exception_in_path
-		
-	def find_game(self):
+	# def game_found(self):
+	# 	gameCounter += 1
+	# 	print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
+	# 	games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
+	# 	games_saves_paths.append(os.path.join(root, dirname))
+
+	# 	tosave_val = IntVar()
+	# 	tosave_val.set(0)
+	# 	cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
+	# 	cb.pack(anchor=W)
+	# 	check_vars.append(tosave_val)
+
+	# 	config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
+	# 	with open('config.ini', 'w') as configfile:
+	# 		config.write(configfile)
+
+	def find_game(self, root, dirname):
 		global gameCounter
 		if scan_new_var.get() == 1 and (config.get('GAME PATHS', self.cfg_name) == '' or (not os.path.exists(config.get('GAME PATHS', self.cfg_name)))):
 			if self.path != other_paths:
@@ -484,6 +499,7 @@ def create_placer_window():
 			folder_path = filedialog.askopenfilename()
 			if folder_path:  # Проверяем, что путь не пустой
 					entry.insert(0, folder_path)  # Вставляем выбранный путь
+					
 	def place_saves():
 		if os.path.isfile(entry.get()) or os.path.isdir(entry.get()):
 			if zipfile.is_zipfile(entry.get()):
@@ -491,7 +507,7 @@ def create_placer_window():
 				with open(os.path.join(entry.get().replace(".zip", ""), "savepaths.json"), 'r', encoding='utf-8') as f:
 					data = json.load(f)
 					for save in data.values():
-						if os.getlogin() not in save["path"]:
+						if save["username"] not in save["path"]:
 							for path in other_paths:
 								for root, dirs, files in os.walk(path):
 									for dirname in dirs:
@@ -500,7 +516,7 @@ def create_placer_window():
 						else:
 							path = save["path"]
 						username = save["username"]
-						game_name = os.path.basename(path)
+						game_name = os.path.basename(save["path"])
 						path = path.replace(username, os.getlogin()).replace(game_name, "")
 						print("PATH: ", path)
 						# print(f"{entry.get().replace(".zip", "")}/{game_name}")
@@ -527,6 +543,8 @@ def create_placer_window():
 			showinfo(title="SavePlacer", message="Files successfully placed!")
 		else:
 			showerror(title="SavePlacer", message="Invalid path!")
+
+			
 	def is_valid_path(newval):
 		path = newval
 		# Проверяем, является ли путь папкой
@@ -676,10 +694,10 @@ def create_other_paths_window():
 		folder1_frame.pack(anchor=NW, fill=X, padx=4)
 		
 		global entry1, entry2, entry3, entry4
-  
+	
 		label1 = ttk.Label(folder1_frame, text="You can select other folders with your games", wraplength=200, justify=CENTER)
 		label1.pack(side=TOP, padx=[5,0], pady=3)
-  
+	
 		entry1 = ttk.Entry(folder1_frame, width=10)
 		entry1.pack(side=tk.LEFT, fill=tk.X, padx=[5,0], pady=3, expand=True)
 
@@ -717,7 +735,7 @@ def create_other_paths_window():
 		select_btn4.pack(side=tk.LEFT, padx=[3,2], pady=0)
 
 		set_entries(entry1, entry2, entry3, entry4)
-  
+	
 		def change_lang():
 			if config.get('SETTINGS', 'lang') == 'en':
 				select_btn1.config(text="Select")
@@ -756,14 +774,14 @@ def change_language(lang):
 
 		menu_panel.entryconfig(1, label="Language")
 		menu_panel.entryconfig(3, label="Other paths")
-  
+	
 		language_menu.entryconfig(0, label="English")
 		language_menu.entryconfig(1, label="Russian")
-  
+	
 		placer_menu.entryconfig(0, label="Open")
-  
+	
 		other_paths_menu.entryconfig(0, label="Add")
-  
+	
 	elif lang == 'ru':
 		header.config(text="SaveFinder")
 		# select_type_lb.config(text="Выберите тип\nархивирования:")
@@ -780,11 +798,11 @@ def change_language(lang):
 		menu_panel.entryconfig(3, label="Прочие пути")
 		language_menu.entryconfig(0, label="Англ.")
 		language_menu.entryconfig(1, label="Русский")
-  
+	
 		placer_menu.entryconfig(0, label="Открыть")
-  
+	
 		other_paths_menu.entryconfig(0, label="Добавить")
-  
+	
 	config.set('SETTINGS', 'lang', f'{lang}')
 	with open('config.ini', 'w') as configfile:
 		config.write(configfile)
