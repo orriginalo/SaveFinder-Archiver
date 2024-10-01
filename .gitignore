@@ -1,8 +1,8 @@
 /.conda
+/.venv
 /dist
 /build
 /__pycache__
-
 /Archivated/
 config.ini
 

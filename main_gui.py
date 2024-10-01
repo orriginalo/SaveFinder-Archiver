@@ -26,6 +26,7 @@ games_saves_paths = []
 check_vars = []
 global scan_new_var
 
+total_folders_size: float = 0
 
 def first_run():
 	if os.path.exists("config.ini"):
@@ -81,6 +82,7 @@ def first_run():
 				'fs_17_path': '',
 				'fs_22_path': '',
 				'fallout4_path': '',
+				'warframe_path': ''
 				}
 		}
 		with open('config.ini', 'w') as configfile:
@@ -140,6 +142,18 @@ class game():
 	# 	config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
 	# 	with open('config.ini', 'w') as configfile:
 	# 		config.write(configfile)
+	def create_checkbox(self):
+		tosave_val = IntVar()
+		tosave_val.set(0)
+		dirsize: int
+		if dirsize_scanning_cb_val.get() == 1:
+			dirsize = f"{get_dir_size(config.get('GAME PATHS', self.cfg_name)):.1f}"
+			cb_text = f"{self.name} : {dirsize} mb"
+		else:
+			cb_text = f"{self.name}"
+		cb = ttk.Checkbutton(cb_frame, text=cb_text, variable=tosave_val, takefocus=0) #, command=lambda: calculate_foldersizes(dirsize)
+		cb.pack(anchor=W)
+		check_vars.append(tosave_val)
 
 	def find_game(self):
 		global gameCounter
@@ -157,11 +171,7 @@ class game():
 											games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
 											games_saves_paths.append(os.path.join(root, dirname))
 						
-											tosave_val = IntVar()
-											tosave_val.set(0)
-											cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
-											cb.pack(anchor=W)
-											check_vars.append(tosave_val)
+											self.create_checkbox()
 						
 											config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
 											with open('config.ini', 'w') as configfile:
@@ -174,11 +184,7 @@ class game():
 										games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
 										games_saves_paths.append(os.path.join(root, dirname))
 					
-										tosave_val = IntVar()
-										tosave_val.set(0)
-										cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
-										cb.pack(anchor=W)
-										check_vars.append(tosave_val)
+										self.create_checkbox()
 					
 										config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
 										with open('config.ini', 'w') as configfile:
@@ -192,11 +198,7 @@ class game():
 										games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
 										games_saves_paths.append(os.path.join(root, dirname))
 					
-										tosave_val = IntVar()
-										tosave_val.set(0)
-										cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
-										cb.pack(anchor=W)
-										check_vars.append(tosave_val)
+										self.create_checkbox()
 					
 										config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
 										with open('config.ini', 'w') as configfile:
@@ -208,11 +210,7 @@ class game():
 									games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
 									games_saves_paths.append(os.path.join(root, dirname))
 					
-									tosave_val = IntVar()
-									tosave_val.set(0)
-									cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
-									cb.pack(anchor=W)
-									check_vars.append(tosave_val)
+									self.create_checkbox()
 					
 									config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
 									with open('config.ini', 'w') as configfile:
@@ -232,11 +230,7 @@ class game():
 												games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
 												games_saves_paths.append(os.path.join(root, dirname))
 							
-												tosave_val = IntVar()
-												tosave_val.set(0)
-												cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
-												cb.pack(anchor=W)
-												check_vars.append(tosave_val)
+												self.create_checkbox()
 							
 												config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
 												with open('config.ini', 'w') as configfile:
@@ -249,11 +243,7 @@ class game():
 											games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
 											games_saves_paths.append(os.path.join(root, dirname))
 						
-											tosave_val = IntVar()
-											tosave_val.set(0)
-											cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
-											cb.pack(anchor=W)
-											check_vars.append(tosave_val)
+											self.create_checkbox()
 						
 											config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
 											with open('config.ini', 'w') as configfile:
@@ -267,11 +257,7 @@ class game():
 											games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
 											games_saves_paths.append(os.path.join(root, dirname))
 						
-											tosave_val = IntVar()
-											tosave_val.set(0)
-											cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
-											cb.pack(anchor=W)
-											check_vars.append(tosave_val)
+											self.create_checkbox()
 						
 											config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
 											with open('config.ini', 'w') as configfile:
@@ -283,11 +269,7 @@ class game():
 										games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
 										games_saves_paths.append(os.path.join(root, dirname))
 						
-										tosave_val = IntVar()
-										tosave_val.set(0)
-										cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
-										cb.pack(anchor=W)
-										check_vars.append(tosave_val)
+										self.create_checkbox()
 						
 										config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
 										with open('config.ini', 'w') as configfile:
@@ -301,7 +283,13 @@ class game():
 
 				tosave_val = IntVar()
 				tosave_val.set(0)
-				cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
+				dirsize: int
+				if dirsize_scanning_cb_val.get() == 1:
+					dirsize = f"{get_dir_size(config.get('GAME PATHS', self.cfg_name)):.1f}"
+					cb_text = f"{self.name} : {dirsize} mb"
+				else:
+					cb_text = f"{self.name}"
+				cb = ttk.Checkbutton(cb_frame, text=cb_text, variable=tosave_val, takefocus=0) #, command=lambda: calculate_foldersizes(dirsize)
 				cb.pack(anchor=W)
 				check_vars.append(tosave_val)
 
@@ -317,6 +305,16 @@ def create_saves_json(json_path):
 	with open(json_path, 'w', encoding='utf-8') as f:
 		json.dump(saves, f, ensure_ascii=False, indent=4)
 
+def get_dir_size(path):
+    total_size = 0
+    # Проходим по всем файлам и поддиректориям
+    for dirpath, dirnames, filenames in os.walk(path):
+        for filename in filenames:
+            file_path = os.path.join(dirpath, filename)
+            # Проверяем, что это файл, и добавляем его размер
+            if os.path.isfile(file_path):
+                total_size += os.path.getsize(file_path)
+    return total_size / (1024 * 1024)  # Переводим размер в мегабайты
 
 def find_games():
 	startfind_btn.config(state=DISABLED)
@@ -422,6 +420,9 @@ def find_games():
 	deadcells = game("Dead Cells", "save", other_paths, "deadcells_path", file_in='user_0.dat')
 	deadcells.find_game()
  
+	warframe = game("Warframe", "Warframe", local_path, "warframe_path")
+	warframe.find_game()
+
 	end = perf_counter()
  
 	time = end - start
@@ -445,6 +446,14 @@ def select_all():
 			i.set(1)
 			print(i.get())
 		select_all = True
+
+# TODO: make this function
+# def calculate_foldersizes(size):
+# 	global total_folders_size
+# 	total_folders_size += float(size)
+# 	total_foldersize_lb.config(state=NORMAL, text=f"{total_folders_size:.2f} mb")
+
+	
 def copy_and_archive(): # Функция для копирования и архивации
 		if all(i.get() == 0 for i in check_vars):
 				showerror(title="SaveFinder&Archiver", message="No files selected!")
@@ -771,6 +780,7 @@ def change_language(lang):
 		scan_new_cb.config(text="Scan for new saves")
 		archive_rb.config(text="Archive")
 		copy_rb.config(text="Copy")
+		enable_dirsize_scanning_cb.config(text="Enable folder size checking\n(slower)")
 
 		menu_panel.entryconfig(1, label="Language")
 		menu_panel.entryconfig(3, label="Other paths")
@@ -792,6 +802,7 @@ def change_language(lang):
 		scan_new_cb.config(text="Искать новые сохранения")
 		archive_rb.config(text="Архив")
 		copy_rb.config(text="Копия")
+		enable_dirsize_scanning_cb.config(text="Включить проверку размера\nпапок (медленнее)")
 	
 
 		menu_panel.entryconfig(1, label="Язык")
@@ -867,6 +878,15 @@ right_frame.pack(side=RIGHT, padx=10, pady=10, fill=Y)
 
 style = ttk.Style()
 style.configure('TButton', font=('JetBrains Mono', 10))
+
+dirsize_scanning_cb_val = IntVar()
+dirsize_scanning_cb_val.set(0)
+
+total_foldersize_lb = Label(right_frame, state=NORMAL)
+total_foldersize_lb.pack()
+
+enable_dirsize_scanning_cb = ttk.Checkbutton(right_frame, text="Enable folder size checking\n(slower)", variable=dirsize_scanning_cb_val, takefocus=0)
+enable_dirsize_scanning_cb.pack()
 
 startarchive_btn = ttk.Button(right_frame, text="Start", style='TButton',state=DISABLED,takefocus=0 ,command=copy_and_archive)
 startarchive_btn.pack(fill=X, anchor=W,)
