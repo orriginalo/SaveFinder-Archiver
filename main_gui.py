@@ -127,21 +127,8 @@ class game():
 		self.name = name
 		self.file_in = file_in
 		self.exception_in_path = exception_in_path
-	# def game_found(self):
-	# 	gameCounter += 1
-	# 	print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
-	# 	games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
-	# 	games_saves_paths.append(os.path.join(root, dirname))
+		self.folder_in_path = folder_in_path	
 
-	# 	tosave_val = IntVar()
-	# 	tosave_val.set(0)
-	# 	cb = ttk.Checkbutton(cb_frame, text=self.name, variable=tosave_val, takefocus=0)
-	# 	cb.pack(anchor=W)
-	# 	check_vars.append(tosave_val)
-
-	# 	config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
-	# 	with open('config.ini', 'w') as configfile:
-	# 		config.write(configfile)
 	def create_checkbox(self):
 		tosave_val = IntVar()
 		tosave_val.set(0)
@@ -155,6 +142,22 @@ class game():
 		cb.pack(anchor=W)
 		check_vars.append(tosave_val)
 
+	def game_found(self, root, dirname):
+		global gameCounter
+		gameCounter += 1
+		for i in str(root): # Replace all "/", to "\"
+			if i == "/":
+				root = str(root).replace("/", "\\")
+		print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
+		games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
+		games_saves_paths.append(os.path.join(root, dirname))
+
+		self.create_checkbox()
+
+		config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
+		with open('config.ini', 'w') as configfile:
+			config.write(configfile)
+
 	def find_game(self):
 		global gameCounter
 		if scan_new_var.get() == 1 and (config.get('GAME PATHS', self.cfg_name) == '' or (not os.path.exists(config.get('GAME PATHS', self.cfg_name)))):
@@ -162,119 +165,96 @@ class game():
 				for root, dirs, files in os.walk(self.path):
 					for dirname in dirs:
 						if dirname == self.folder_name or dirname == self.second_folder_name:
-							if self.file_in != None:
-								if self.exception_in_path != None:
-									if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
+							if self.folder_in_path != None:
+								if self.file_in != None: # Если file_in не None
+									if self.exception_in_path != None: # Если exception_in_path не None
+										if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
+											if self.exception_in_path not in os.path.join(root, dirname):
+												if self.folder_in_path in os.path.join(root, dirname):
+													self.game_found(root, dirname)
+													break 
+									else:
+										if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
+											if self.folder_in_path in os.path.join(root, dirname):
+												self.game_found(root, dirname)
+												break 
+								else:
+									if self.exception_in_path != None:
 										if self.exception_in_path not in os.path.join(root, dirname):
-											gameCounter += 1
-											print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
-											games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
-											games_saves_paths.append(os.path.join(root, dirname))
-						
-											self.create_checkbox()
-						
-											config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
-											with open('config.ini', 'w') as configfile:
-												config.write(configfile)
+											if self.folder_in_path in os.path.join(root, dirname):
+												self.game_found(root, dirname)
+												break 
+									else:
+										if self.folder_in_path in os.path.join(root, dirname):
+											self.game_found(root, dirname)
+											break
+							else:
+								if self.file_in != None: # Если file_in не None
+									if self.exception_in_path != None: # Если exception_in_path не None
+										if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
+											if self.exception_in_path not in os.path.join(root, dirname):
+												self.game_found(root, dirname)
+												break 
+									else:
+										if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
+											self.game_found(root, dirname)
 											break 
 								else:
-									if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
-										gameCounter += 1
-										print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
-										games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
-										games_saves_paths.append(os.path.join(root, dirname))
-					
-										self.create_checkbox()
-					
-										config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
-										with open('config.ini', 'w') as configfile:
-											config.write(configfile)
-										break 
-							else:
-								if self.exception_in_path != None:
-									if self.exception_in_path not in os.path.join(root, dirname):
-										gameCounter += 1
-										print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
-										games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
-										games_saves_paths.append(os.path.join(root, dirname))
-					
-										self.create_checkbox()
-					
-										config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
-										with open('config.ini', 'w') as configfile:
-											config.write(configfile)
-										break 
-								else:
-									gameCounter += 1
-									print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
-									games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
-									games_saves_paths.append(os.path.join(root, dirname))
-					
-									self.create_checkbox()
-					
-									config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
-									with open('config.ini', 'w') as configfile:
-										config.write(configfile)
-									break
+									if self.exception_in_path != None:
+										if self.exception_in_path not in os.path.join(root, dirname):
+											self.game_found(root, dirname)
+											break 
+									else:
+										self.game_found(root, dirname)
+										break
+									
 			else:
 				for path in other_paths:
 					for root, dirs, files in os.walk(path):
 						for dirname in dirs:
 							if dirname == self.folder_name or dirname == self.second_folder_name:
-								if self.file_in != None:
-									if self.exception_in_path != None:
-										if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
+								if self.folder_in_path != None:
+									if self.file_in != None: # Если file_in не None
+										if self.exception_in_path != None: # Если exception_in_path не None
+											if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
+												if self.exception_in_path not in os.path.join(root, dirname):
+													if self.folder_in_path in os.path.join(root, dirname):
+														self.game_found(root, dirname)
+														break 
+										else:
+											if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
+												if self.folder_in_path in os.path.join(root, dirname):
+													self.game_found(root, dirname)
+													break 
+									else:
+										if self.exception_in_path != None:
 											if self.exception_in_path not in os.path.join(root, dirname):
-												gameCounter += 1
-												print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
-												games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
-												games_saves_paths.append(os.path.join(root, dirname))
-							
-												self.create_checkbox()
-							
-												config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
-												with open('config.ini', 'w') as configfile:
-													config.write(configfile)
+												if self.folder_in_path in os.path.join(root, dirname):
+													self.game_found(root, dirname)
+													break 
+										else:
+											if self.folder_in_path in os.path.join(root, dirname):
+												self.game_found(root, dirname)
+												break
+								else:
+									if self.file_in != None: # Если file_in не None
+										if self.exception_in_path != None: # Если exception_in_path не None
+											if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
+												if self.exception_in_path not in os.path.join(root, dirname):
+													self.game_found(root, dirname)
+													break 
+										else:
+											if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
+												self.game_found(root, dirname)
 												break 
 									else:
-										if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
-											gameCounter += 1
-											print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
-											games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
-											games_saves_paths.append(os.path.join(root, dirname))
-						
-											self.create_checkbox()
-						
-											config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
-											with open('config.ini', 'w') as configfile:
-												config.write(configfile)
-											break 
-								else:
-									if self.exception_in_path != None:
-										if self.exception_in_path not in os.path.join(root, dirname):
-											gameCounter += 1
-											print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
-											games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
-											games_saves_paths.append(os.path.join(root, dirname))
-						
-											self.create_checkbox()
-						
-											config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
-											with open('config.ini', 'w') as configfile:
-												config.write(configfile)
-											break 
-									else:
-										gameCounter += 1
-										print(f"[bold white]{gameCounter}. [bold blue]{self.name} detected![bold white][italic] In:", f"{os.path.join(root, dirname)}")
-										games_list.insert(0, f"{self.name} - {os.path.join(root, dirname)}")
-										games_saves_paths.append(os.path.join(root, dirname))
-						
-										self.create_checkbox()
-						
-										config.set('GAME PATHS', self.cfg_name, os.path.join(root, dirname))
-										with open('config.ini', 'w') as configfile:
-											config.write(configfile)
-										break
+										if self.exception_in_path != None:
+											if self.exception_in_path not in os.path.join(root, dirname):
+												self.game_found(root, dirname)
+												break 
+										else:
+											self.game_found(root, dirname)
+											break
 		else:
 			if config.get("GAME PATHS", self.cfg_name) != '' and os.path.exists(config.get("GAME PATHS", self.cfg_name)):
 				gameCounter += 1
@@ -823,6 +803,9 @@ main_w = Tk()
 main_w.title("SaveFinder & Archiver")
 # main_w.iconbitmap(default="icon.ico")
 main_w.geometry("610x600")
+main_w.minsize(main_w.winfo_width(), main_w.winfo_height())
+main_w.resizable(False, True)
+
 
 menu_panel = tk.Menu(main_w)
 main_w.config(menu=menu_panel)
