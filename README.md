@@ -71,6 +71,7 @@ If you want the program to search not only in C:/Users (as per default), then cl
 - Dying Light
 - Skyrim
 - Fallout 4
+- Overcooked 1, 2
 - Dead Cells *
 #### Upcoming Games:
 - Doom 3 *

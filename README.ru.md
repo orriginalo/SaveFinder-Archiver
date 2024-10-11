@@ -67,6 +67,7 @@ pip install -r requirements.txt
 - Dying Light
 - Skyrim
 - Fallout 4
+- Overcooked 1, 2
 - Dead Cells *
 #### Игры на очереди:
 - Doom 3 *
