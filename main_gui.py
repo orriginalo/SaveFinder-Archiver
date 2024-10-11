@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
-from tkinter.messagebox import showerror, showwarning, showinfo
+from tkinter.messagebox import showerror, showinfo
 from tkinter import filedialog
 import os
 import configparser
@@ -12,12 +12,13 @@ from rich import print
 from time import perf_counter
 from datetime import datetime
 
-roaming_path = f"C:\\Users\\{os.getlogin()}\\AppData\\Roaming"
-local_path = f"C:\\Users\\{os.getlogin()}\\AppData\\Local"
-locallow_path = f"C:\\Users\\{os.getlogin()}\\AppData\\LocalLow"
-documents_path = f"C:\\Users\\{os.getlogin()}\\Documents"
+username = os.getlogin()
+roaming_path = f"C:\\Users\\{username}\\AppData\\Roaming"
+local_path = f"C:\\Users\\{username}\\AppData\\Local"
+locallow_path = f"C:\\Users\\{username}\\AppData\\LocalLow"
+documents_path = f"C:\\Users\\{username}\\Documents"
 steam_path = "C:\\Program Files (x86)\\Steam"
-users_path = f"C:\\Users\\{os.getlogin()}"
+users_path = f"C:\\Users\\{username}"
 
 other_paths = []
 
@@ -82,7 +83,11 @@ def first_run():
 				'fs_17_path': '',
 				'fs_22_path': '',
 				'fallout4_path': '',
-				'warframe_path': ''
+				'warframe_path': '',
+				'drg_path': '',
+				'drg_survivor_path': '',
+				'overcooked_path': '',
+				'overcooked2_path': ''
 				}
 		}
 		with open('config.ini', 'w') as configfile:
@@ -96,10 +101,10 @@ def first_run():
 	else:
 		os.mkdir(f".\\Archivated")
 	
-	configg = configparser.ConfigParser()
-	configg.read("config.ini")
+
 	global config
-	config = configg
+	config = configparser.ConfigParser()
+	config.read("config.ini")
  
 	for el in config["FOLDERS WITH GAMES"].values():
 		if el != '':
@@ -403,6 +408,17 @@ def find_games():
 	warframe = game("Warframe", "Warframe", local_path, "warframe_path")
 	warframe.find_game()
 
+	drg = game("Deep Rock Galactic", "Saved", other_paths, "drg_path", folder_in_path="FSD")
+	drg.find_game()
+
+	drg_survivor = game("Deep Rock Gamactic: Survivor", "DRG_Survivor", locallow_path, "drg_survivor_path")
+	drg_survivor.find_game()
+
+	overcooked = game("Overcooked", "Overcooked", locallow_path, "overcooked_path", folder_in_path="Ghost Town Games")
+	overcooked.find_game()
+
+	overcooked2 = game("Overcooked 2", "Overcooked2", locallow_path, "overcooked2_path", folder_in_path="Team17")
+	overcooked2.find_game()
 	end = perf_counter()
  
 	time = end - start
@@ -468,7 +484,7 @@ def copy_and_archive(): # Функция для копирования и арх
 				create_saves_json(f".\\Archivated\\savefind-{current_datetime}\\savepaths.json")
 
 				showinfo(title="SaveFinder&Archiver", message="Files successfully copied to one folder!")
-		print("SHOOO: ", selected_paths)
+		print("Selected paths: ", selected_paths)
 
 
 
@@ -804,7 +820,7 @@ main_w.title("SaveFinder & Archiver")
 # main_w.iconbitmap(default="icon.ico")
 main_w.geometry("610x600")
 main_w.minsize(main_w.winfo_width(), main_w.winfo_height())
-main_w.resizable(False, True)
+# main_w.resizable(False, True)
 
 
 menu_panel = tk.Menu(main_w)
@@ -890,7 +906,7 @@ select_all_btn.pack(fill=X)
 
 cb_frame = ttk.Frame(borderwidth=2, relief=SOLID, padding=[7,7], width=157)
 cb_frame.pack(anchor=NW, fill=X, after=select_all_btn, padx=0, pady=5)
-	
+
 
 first_run()
 change_language(str(config.get('SETTINGS', 'lang')))
