@@ -69,8 +69,8 @@ pip install -r requirements.txt
 - Fallout 4
 - Overcooked 1, 2
 - Dead Cells *
-#### Игры на очереди:
 - Doom 3 *
+#### Игры на очереди:
 - Risk of rain 2 *
 - Cyberpunk 2077 *
 - Subnautica *

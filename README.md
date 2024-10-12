@@ -73,8 +73,8 @@ If you want the program to search not only in C:/Users (as per default), then cl
 - Fallout 4
 - Overcooked 1, 2
 - Dead Cells *
-#### Upcoming Games:
 - Doom 3 *
+#### Upcoming Games:
 - Risk of rain 2 *
 - Cyberpunk 2077 *
 - Subnautica *

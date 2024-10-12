@@ -20,15 +20,26 @@ documents_path = f"C:\\Users\\{username}\\Documents"
 steam_path = "C:\\Program Files (x86)\\Steam"
 users_path = f"C:\\Users\\{username}"
 
-other_paths = []
+"""
+Related arrays:
 
-gameCounter = 0
-games_saves_paths = []
-check_vars = []
+games_saves_paths[] - paths to save folders
+check_vars[] - variables for checkboxes
+total_folders_sizes[] - sizes of folders
+
+i.e. if combined, 1 index of each array will contain the path to the save folder, the variable for the checkbox of this save and the size of this folder.
+"""
+
+other_paths: list = []
+
+gameCounter: int = 0
+games_saves_paths: list = []
+check_vars: list = []
 global scan_new_var
 
+global total_folders_size
 total_folders_size: float = 0
-
+total_folders_sizes: list = []
 def first_run():
 	if os.path.exists("config.ini"):
 		pass
@@ -87,7 +98,8 @@ def first_run():
 				'drg_path': '',
 				'drg_survivor_path': '',
 				'overcooked_path': '',
-				'overcooked2_path': ''
+				'overcooked2_path': '',
+				'doom3_path': ''
 				}
 		}
 		with open('config.ini', 'w') as configfile:
@@ -124,7 +136,7 @@ def set_entries(entry1, entry2, entry3, entry4):
 		entry4.insert(0, config.get("FOLDERS WITH GAMES", "folder_4"))
 	
 class game():
-	def __init__(self, name, folder_name, where_search_path, cfg_name, file_in: str = None, exception_in_path: str = None, second_folder_name: str = None, folder_in_path: str = None):
+	def __init__(self, name, folder_name, where_search_path, cfg_name, file_in: str = None, exception_in_path: str = None, second_folder_name: str = None, folder_in_path: str = None, use_lower_replace: bool = False):
 		self.folder_name = folder_name
 		self.second_folder_name = second_folder_name
 		self.path = where_search_path
@@ -133,6 +145,7 @@ class game():
 		self.file_in = file_in
 		self.exception_in_path = exception_in_path
 		self.folder_in_path = folder_in_path	
+		self.use_lower_replace = use_lower_replace
 
 	def create_checkbox(self):
 		tosave_val = IntVar()
@@ -140,10 +153,19 @@ class game():
 		dirsize: int
 		if dirsize_scanning_cb_val.get() == 1:
 			dirsize = f"{get_dir_size(config.get('GAME PATHS', self.cfg_name)):.1f}"
-			cb_text = f"{self.name} : {dirsize} mb"
+			total_folders_sizes.append(float(dirsize))
+			info = "Mb"
+			if float(dirsize) <= 0.0:
+				dirsize = str(f"< {dirsize}")
+			elif float(dirsize) >= 1024:
+				dirsize = str(f"{dirsize / 1024:.1f}")
+				info = "Gb"
+			cb_text = f"{self.name} : {dirsize} {info}"
 		else:
 			cb_text = f"{self.name}"
-		cb = ttk.Checkbutton(cb_frame, text=cb_text, variable=tosave_val, takefocus=0) #, command=lambda: calculate_foldersizes(dirsize)
+		cb = ttk.Checkbutton(cb_frame, text=cb_text, variable=tosave_val, takefocus=0)
+		if dirsize_scanning_cb_val.get() == 1:
+			cb.config(command=lambda: calculate_foldersizes(dirsize, tosave_val))
 		cb.pack(anchor=W)
 		check_vars.append(tosave_val)
 
@@ -175,22 +197,22 @@ class game():
 									if self.exception_in_path != None: # Если exception_in_path не None
 										if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
 											if self.exception_in_path not in os.path.join(root, dirname):
-												if self.folder_in_path in os.path.join(root, dirname):
+												if (self.folder_in_path.lower().replace(" ", "") if self.use_lower_replace else self.folder_in_path) in os.path.join(root, dirname): # previous: if self.folder_in_path in os.path.join(root, dirname):
 													self.game_found(root, dirname)
 													break 
 									else:
 										if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
-											if self.folder_in_path in os.path.join(root, dirname):
+											if (self.folder_in_path.lower().replace(" ", "") if self.use_lower_replace else self.folder_in_path) in os.path.join(root, dirname):
 												self.game_found(root, dirname)
 												break 
 								else:
 									if self.exception_in_path != None:
 										if self.exception_in_path not in os.path.join(root, dirname):
-											if self.folder_in_path in os.path.join(root, dirname):
+											if (self.folder_in_path.lower().replace(" ", "") if self.use_lower_replace else self.folder_in_path) in os.path.join(root, dirname):
 												self.game_found(root, dirname)
 												break 
 									else:
-										if self.folder_in_path in os.path.join(root, dirname):
+										if (self.folder_in_path.lower().replace(" ", "") if self.use_lower_replace else self.folder_in_path) in os.path.join(root, dirname):
 											self.game_found(root, dirname)
 											break
 							else:
@@ -217,28 +239,28 @@ class game():
 				for path in other_paths:
 					for root, dirs, files in os.walk(path):
 						for dirname in dirs:
-							if dirname == self.folder_name or dirname == self.second_folder_name:
+							if (dirname.lower().replace(" ", "") == (self.folder_name).lower().replace(" ", "") if self.use_lower_replace else dirname == self.folder_name)  or dirname == self.second_folder_name:
 								if self.folder_in_path != None:
 									if self.file_in != None: # Если file_in не None
 										if self.exception_in_path != None: # Если exception_in_path не None
 											if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
 												if self.exception_in_path not in os.path.join(root, dirname):
-													if self.folder_in_path in os.path.join(root, dirname):
+													if (self.folder_in_path.lower().replace(" ", "") if self.use_lower_replace else self.folder_in_path) in os.path.join(root, dirname):
 														self.game_found(root, dirname)
 														break 
 										else:
 											if any(file == self.file_in for file in os.listdir(os.path.join(root, dirname))): # if file_in == "steam.exe"
-												if self.folder_in_path in os.path.join(root, dirname):
+												if (self.folder_in_path.lower().replace(" ", "") if self.use_lower_replace else self.folder_in_path) in os.path.join(root, dirname):
 													self.game_found(root, dirname)
 													break 
 									else:
 										if self.exception_in_path != None:
 											if self.exception_in_path not in os.path.join(root, dirname):
-												if self.folder_in_path in os.path.join(root, dirname):
+												if (self.folder_in_path.lower().replace(" ", "") if self.use_lower_replace else self.folder_in_path) in os.path.join(root, dirname):
 													self.game_found(root, dirname)
 													break 
 										else:
-											if self.folder_in_path in os.path.join(root, dirname):
+											if (self.folder_in_path.lower().replace(" ", "") if self.use_lower_replace else self.folder_in_path) in os.path.join(root, dirname):
 												self.game_found(root, dirname)
 												break
 								else:
@@ -271,10 +293,19 @@ class game():
 				dirsize: int
 				if dirsize_scanning_cb_val.get() == 1:
 					dirsize = f"{get_dir_size(config.get('GAME PATHS', self.cfg_name)):.1f}"
-					cb_text = f"{self.name} : {dirsize} mb"
+					total_folders_sizes.append(float(dirsize))
+					info = "Mb"
+					if float(dirsize) <= 0.0:
+						dirsize = str(f"< {dirsize}")
+					elif float(dirsize) >= 1024:
+						dirsize = str(f"{dirsize / 1024:.1f}")
+						info = "Gb"
+					cb_text = f"{self.name} : {dirsize} {info}"
 				else:
 					cb_text = f"{self.name}"
-				cb = ttk.Checkbutton(cb_frame, text=cb_text, variable=tosave_val, takefocus=0) #, command=lambda: calculate_foldersizes(dirsize)
+				cb = ttk.Checkbutton(cb_frame, text=cb_text, variable=tosave_val, takefocus=0)
+				if dirsize_scanning_cb_val.get() == 1:
+					cb.config(command=lambda: calculate_foldersizes(dirsize, tosave_val))
 				cb.pack(anchor=W)
 				check_vars.append(tosave_val)
 
@@ -302,6 +333,8 @@ def get_dir_size(path):
     return total_size / (1024 * 1024)  # Переводим размер в мегабайты
 
 def find_games():
+	scan_new_cb.config(state=DISABLED)
+	enable_dirsize_scanning_cb.config(state=DISABLED)
 	startfind_btn.config(state=DISABLED)
 	select_all_btn.config(state=NORMAL)	
 	startarchive_btn.config(state=NORMAL)
@@ -411,7 +444,7 @@ def find_games():
 	drg = game("Deep Rock Galactic", "Saved", other_paths, "drg_path", folder_in_path="FSD")
 	drg.find_game()
 
-	drg_survivor = game("Deep Rock Gamactic: Survivor", "DRG_Survivor", locallow_path, "drg_survivor_path")
+	drg_survivor = game("Deep Rock Galactic: Survivor", "DRG_Survivor", locallow_path, "drg_survivor_path")
 	drg_survivor.find_game()
 
 	overcooked = game("Overcooked", "Overcooked", locallow_path, "overcooked_path", folder_in_path="Ghost Town Games")
@@ -419,6 +452,14 @@ def find_games():
 
 	overcooked2 = game("Overcooked 2", "Overcooked2", locallow_path, "overcooked2_path", folder_in_path="Team17")
 	overcooked2.find_game()
+
+	doom3 = game("Doom 3", "savegames", other_paths, "doom3_path", folder_in_path="Doom 3",use_lower_replace=True)
+	doom3.find_game()
+
+
+
+
+
 	end = perf_counter()
  
 	time = end - start
@@ -432,22 +473,35 @@ def find_games():
 selected_all = False
 def select_all():
 	global select_all
-	
+	global total_folders_size
+
 	if select_all == True:
-		for i in check_vars:
-			i.set(0)
+		for i in range(len(check_vars)):
+			check_vars[i].set(0)
+			if dirsize_scanning_cb_val.get() == 1:
+				total_folders_size = 0
+				total_foldersize_lb.config(state=DISABLED, text=f"{total_folders_size:.2f} mb")
 		select_all = False
 	else:
-		for i in check_vars:
-			i.set(1)
-			print(i.get())
+		for i in range(len(check_vars)):
+			if dirsize_scanning_cb_val.get() == 1:
+				if check_vars[i].get() == 0:
+					total_folders_size += float(total_folders_sizes[i])
+					total_foldersize_lb.config(state=NORMAL, text=f"{total_folders_size:.2f} mb")
+			check_vars[i].set(1)
+			# print(check_vars[i].get())
 		select_all = True
 
 # TODO: make this function
-# def calculate_foldersizes(size):
-# 	global total_folders_size
-# 	total_folders_size += float(size)
-# 	total_foldersize_lb.config(state=NORMAL, text=f"{total_folders_size:.2f} mb")
+def calculate_foldersizes(size, value):
+	global total_folders_size
+	if value.get() == 1:
+		total_folders_size += float(size.replace("< ", ""))
+		total_foldersize_lb.config(state=NORMAL, text=f"{total_folders_size:.2f} mb")
+	else:
+		total_folders_size -= float(size.replace("< ", ""))
+		total_foldersize_lb.config(state=NORMAL, text=f"{total_folders_size:.2f} mb")
+
 
 	
 def copy_and_archive(): # Функция для копирования и архивации

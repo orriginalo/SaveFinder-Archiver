@@ -307,7 +307,7 @@ def find_games():
 	warframe = game("Warframe", "Warframe", local_path, "warframe_path")
 	warframe.find_game()
 
-	drg_survivor = game("Deep Rock Gamactic: Survivor", "DRG_Survivor", locallow_path, "drg_survivor_path")
+	drg_survivor = game("Deep Rock Galactic: Survivor", "DRG_Survivor", locallow_path, "drg_survivor_path")
 	drg_survivor.find_game()
 
 	end = perf_counter()
