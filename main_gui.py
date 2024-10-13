@@ -309,6 +309,8 @@ class game():
 				cb.pack(anchor=W)
 				check_vars.append(tosave_val)
 
+				change_window_height()
+
 				print(f"[bold white]{gameCounter}. [bold blue]{self.name}[bold white][italic] In:", f"{config.get('GAME PATHS', self.cfg_name)}")
 
 def create_saves_json(json_path):
@@ -868,13 +870,19 @@ def change_language(lang):
 	with open('config.ini', 'w') as configfile:
 		config.write(configfile)
 
+def change_window_height():
+	cur_height = main_w.winfo_height()
+	cur_width = main_w.winfo_width()
+	if len(check_vars) > 13:
+		main_w.geometry(f"{cur_width}x{cur_height + 40}")
+
 
 main_w = Tk()
 main_w.title("SaveFinder & Archiver")
 # main_w.iconbitmap(default="icon.ico")
-main_w.geometry("610x600")
+main_w.geometry("625x600")
 main_w.minsize(main_w.winfo_width(), main_w.winfo_height())
-# main_w.resizable(False, True)
+main_w.resizable(True, False)
 
 
 menu_panel = tk.Menu(main_w)
